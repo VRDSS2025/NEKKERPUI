@@ -1,15 +1,8 @@
-<p>freezing-technology works!</p>
 <div class="freezing-technology-page">
-
-  <button
-    type="button"
-    class="back-button"
-    (click)="goBack()">
-
+  <button type="button" class="back-button" (click)="goBack()">
     <mat-icon>arrow_back</mat-icon>
 
     <span>Back to Products</span>
-
   </button>
 
   <app-master-list
@@ -20,7 +13,7 @@
     [columns]="columns"
     [data]="freezingTechnologies"
     (addClicked)="addFreezingTechnology()"
-    (viewClicked)="viewFreezingTechnology($event)">
+    (viewClicked)="viewFreezingTechnology($event)"
+  >
   </app-master-list>
-
 </div>

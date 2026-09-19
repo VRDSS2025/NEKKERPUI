@@ -2,9 +2,7 @@ import {
   Component,
   EventEmitter,
   Input,
-  Output,
-  OnChanges,
-  SimpleChanges
+  Output
 } from '@angular/core';
 
 import { MatIconModule } from '@angular/material/icon';
@@ -12,10 +10,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 
+
 export interface MasterColumn {
   key: string;
   label: string;
 }
+
 
 @Component({
   selector: 'app-master-list',
@@ -31,7 +31,12 @@ export interface MasterColumn {
   templateUrl: './master-list.html',
   styleUrl: './master-list.scss'
 })
-export class MasterListComponent implements OnChanges {
+export class MasterListComponent {
+
+
+  // =====================================================
+  // INPUTS
+  // =====================================================
 
   @Input() title = '';
 
@@ -41,13 +46,37 @@ export class MasterListComponent implements OnChanges {
 
   @Input() columns: MasterColumn[] = [];
 
-  @Input() data: any[] = [];
+
+  private _data: any[] = [];
+
+  @Input()
+  set data(value: any[]) {
+
+    this._data = value ?? [];
+
+    /*
+     * Whenever new API data comes from the parent,
+     * immediately update the table.
+     */
+    this.applyFilter();
+
+  }
+
+  get data(): any[] {
+    return this._data;
+  }
+
 
   @Input() searchPlaceholder = 'Search...';
 
   @Input() primaryActionLabel = 'View';
 
   @Input() secondaryActionLabel = '';
+
+
+  // =====================================================
+  // OUTPUTS
+  // =====================================================
 
   @Output() addClicked =
     new EventEmitter<void>();
@@ -58,26 +87,23 @@ export class MasterListComponent implements OnChanges {
   @Output() secondaryActionClicked =
     new EventEmitter<any>();
 
+
+  // =====================================================
+  // SEARCH
+  // =====================================================
+
   searchText = '';
 
   filteredData: any[] = [];
 
-  /* =====================================================
-     DATA CHANGE
-     ===================================================== */
 
-  ngOnChanges(changes: SimpleChanges): void {
+  // =====================================================
+  // SEARCH
+  // =====================================================
 
-    if (changes['data'] || changes['columns']) {
-      this.applyFilter();
-    }
-  }
-
-  /* =====================================================
-     SEARCH
-     ===================================================== */
-
-  onSearch(event: Event): void {
+  onSearch(
+    event: Event
+  ): void {
 
     const input =
       event.target as HTMLInputElement;
@@ -86,60 +112,99 @@ export class MasterListComponent implements OnChanges {
       input.value;
 
     this.applyFilter();
+
   }
 
-  /* =====================================================
-     FILTER
-     ===================================================== */
+
+  // =====================================================
+  // APPLY FILTER
+  // =====================================================
 
   private applyFilter(): void {
+
+    const data =
+      this._data ?? [];
 
     const search =
       this.searchText
         .trim()
         .toLowerCase();
 
+
+    // -----------------------------------------------------
+    // NO SEARCH
+    // Show ALL API records immediately
+    // -----------------------------------------------------
+
     if (!search) {
 
       this.filteredData =
-        this.data ? [...this.data] : [];
+        [...data];
 
       return;
+
     }
 
+
+    // -----------------------------------------------------
+    // SEARCH
+    // -----------------------------------------------------
+
     this.filteredData =
-      (this.data ?? []).filter(row =>
-        this.columns.some(column =>
-          String(
-            row?.[column.key] ?? ''
+      data.filter(row => {
+
+        return this.columns.some(column => {
+
+          const value =
+            row?.[column.key];
+
+          return String(
+            value ?? ''
           )
             .toLowerCase()
-            .includes(search)
-        )
-      );
+            .includes(search);
+
+        });
+
+      });
+
   }
 
-  /* =====================================================
-     ADD
-     ===================================================== */
+
+  // =====================================================
+  // ADD
+  // =====================================================
 
   add(): void {
+
     this.addClicked.emit();
+
   }
 
-  /* =====================================================
-     VIEW
-     ===================================================== */
 
-  view(row: any): void {
+  // =====================================================
+  // VIEW
+  // =====================================================
+
+  view(
+    row: any
+  ): void {
+
     this.viewClicked.emit(row);
+
   }
 
-  /* =================z====================================
-     SECONDARY ACTION
-     ===================================================== */
 
-  secondaryAction(row: any): void {
+  // =====================================================
+  // SECONDARY ACTION
+  // =====================================================
+
+  secondaryAction(
+    row: any
+  ): void {
+
     this.secondaryActionClicked.emit(row);
+
   }
+
 }

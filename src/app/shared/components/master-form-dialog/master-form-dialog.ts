@@ -37,7 +37,7 @@ export interface MasterFormField {
   required?: boolean;
 
   options?: {
-    value: string;
+    value: string | number;
     label: string;
   }[];
 }

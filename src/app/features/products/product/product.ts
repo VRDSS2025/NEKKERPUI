@@ -1,5 +1,6 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit,ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
+
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatIconModule } from '@angular/material/icon';
@@ -15,6 +16,12 @@ import {
   MasterFormField
 } from '../../../shared/components/master-form-dialog/master-form-dialog';
 
+import {
+ProductGroup,ProductShortCodes   
+} from'../../../core/services/product-group';
+
+
+
 @Component({
   selector: 'app-product',
   standalone: true,
@@ -24,12 +31,20 @@ import {
   ],
   templateUrl: './product.html',
   styleUrl: './product.scss'
-})
-export class ProductComponent {
 
-  private router = inject(Router);
-  private dialog = inject(MatDialog);
-  private snackBar = inject(MatSnackBar);
+})
+
+
+
+export class ProductComponent implements OnInit {
+
+  private readonly router = inject(Router);
+  private readonly dialog = inject(MatDialog);
+  private readonly snackBar = inject(MatSnackBar);
+  private readonly productService = inject(ProductGroup);
+  private readonly cdr = inject(ChangeDetectorRef);
+
+
 
 
   /* =========================================================
@@ -56,153 +71,103 @@ export class ProductComponent {
   }
 
 
-  /* =========================================================
-     PRODUCT DATA
-     TEMPORARY FRONTEND DATA
-     ========================================================= */
-
-  products = [
-    {
-      code: '1004',
-      shortForm: 'HOSO',
-      description: 'HEAD ON SHELL ON',
-      groupId: 'HEAD ON SHELL ON'
-    },
-    {
-      code: '1005',
-      shortForm: 'HLSO',
-      description: 'HEAD LESS SHELL ON',
-      groupId: 'HEAD LESS SHELL ON'
-    },
-    {
-      code: '1001',
-      shortForm: 'HLSO Ezp',
-      description: 'HEAD LESS SHELL OFF EASY PEEL',
-      groupId: 'HEAD LESS SHELL OFF'
-    },
-    {
-      code: '1002',
-      shortForm: 'PDTAILON',
-      description: 'PEELED DEVEINED TAIL ON',
-      groupId: 'PEELED'
-    },
-    {
-      code: '1003',
-      shortForm: 'PDTAILOFF',
-      description: 'PEELED DEVEINED TAIL OFF',
-      groupId: 'PEELED'
-    },
-    {
-      code: '1013',
-      shortForm: 'PUDTON',
-      description: 'PEELED UNDEVEINED TAIL ON',
-      groupId: 'PEELED'
-    },
-    {
-      code: '1014',
-      shortForm: 'PUDTOFF',
-      description: 'PEELED UNDEVEINED TAIL OFF',
-      groupId: 'PEELED'
-    },
-    {
-      code: '1021',
-      shortForm: 'HOEZP',
-      description: 'HEAD ON EASY PEEL',
-      groupId: 'HEAD ON'
-    },
-    {
-      code: '1022',
-      shortForm: 'HLSO RP',
-      description: 'HEAD LESS SHELL OFF RP',
-      groupId: 'HEAD LESS SHELL OFF'
-    },
-    {
-      code: '1023',
-      shortForm: 'PD RP',
-      description: 'PEELED DEVEINED RP',
-      groupId: 'PEELED'
-    }
-  ];
+  products : ProductShortCodes[]= [];
 
 
-  /* =========================================================
-     GROUP OPTIONS
-     TEMPORARY DATA
-     ========================================================= */
+  ngOnInit(): void {
+    this.loadProducts();
+  }
 
-  groupOptions = [
-    {
-      value: 'HEAD ON SHELL ON',
-      label: 'HEAD ON SHELL ON'
-    },
-    {
-      value: 'HEAD LESS SHELL ON',
-      label: 'HEAD LESS SHELL ON'
-    },
-    {
-      value: 'HEAD LESS SHELL OFF',
-      label: 'HEAD LESS SHELL OFF'
-    },
-    {
-      value: 'PEELED',
-      label: 'PEELED'
-    },
-    {
-      value: 'HEAD ON',
-      label: 'HEAD ON'
-    }
-  ];
-
+  loadProducts():void{
+    this.productService
+    .getProductShortCodes()
+    .subscribe({
+      next : (response) => {
+        this.products = 
+        Array.isArray(response)
+        ? [...response]
+        : [];
+        this.cdr.detectChanges();
+      },
+      error : (error) => {
+        console.error(
+          "Failed to load Product Short Codes:",
+          error
+        );
+        this.products = [];
+        this.cdr.detectChanges();
+        this.showError(
+          "Failed to load Products"
+        );
+      }
+    })
+  }
 
   /* =========================================================
      ADD PRODUCT
      ========================================================= */
 
-  addProduct(): void {
+      addProduct() : void {
+        const dialogData : MasterFormDialogData = {
+          title : 'Add Product',
+          mode : 'add',
+          fields : this.getFields()
+        };
 
-    const dialogData: MasterFormDialogData = {
-      title: 'Add Product',
-      mode: 'add',
-      fields: this.getFields()
-    };
+        const dialogRef = this.dialog.open(
+          MasterFormDialogComponent,
+          {
+            width : '700px',
+            maxWidth : '95vw',
+            data : dialogData,
+            autoFocus : false,
+            panelClass : 'premium-master-dialog'
+          }
+        );
 
+        dialogRef.afterClosed().subscribe(result =>{
+          if(!result){
+            return;
+          }
 
-    const dialogRef = this.dialog.open(
-      MasterFormDialogComponent,
-      {
-        width: '700px',
-        maxWidth: '95vw',
-        data: dialogData,
-        autoFocus: false,
-        panelClass: 'premium-master-dialog'
+              // ================================================
+              // PRODUCT SHORT CODE PAYLOAD
+              // ================================================
+
+              const payload : ProductShortCodes = {
+                code :
+                result.code?.trim() || '',
+                shortForm :
+                result.shortForm?.trim() || '',
+                description:
+                result.description?.trim() || '',
+              };
+              
+                  // ================================================
+                  // CREATE PRODUCT
+                  // ================================================
+                  this.productService
+                  .createProductShortCodes(payload)
+                  .subscribe({
+                    next : () =>{
+                      this.showSuccess(
+                      'products added successfully'
+                      );
+
+                      //Reload Records From Api
+
+                      this.loadProducts();
+
+                    },
+                    error: (error)=>{
+                      console.error('Failed to create Product:',error);
+
+                      this.showError('Failed to add Product');
+                    }
+                  });
+        });
+
       }
-    );
-
-
-    dialogRef.afterClosed().subscribe(result => {
-
-      if (!result) {
-        return;
-      }
-
-
-      this.products = [
-        ...this.products,
-        {
-          code: result.code,
-          shortForm: result.shortForm,
-          description: result.description,
-          groupId: result.groupId
-        }
-      ];
-
-
-      this.showSuccess(
-        'Product added successfully'
-      );
-
-    });
-  }
 
 
   /* =========================================================
@@ -251,78 +216,84 @@ export class ProductComponent {
   /* =========================================================
      EDIT PRODUCT
      ========================================================= */
+      
+     editProduct(product : ProductShortCodes) : void {
+      const dialogData : MasterFormDialogData = {
+        title : 'Edit product',
+        mode : 'edit',
 
-  editProduct(product: any): void {
-
-    const dialogData: MasterFormDialogData = {
-      title: 'Edit Product',
-      mode: 'edit',
-
-      values: {
-        code: product.code,
-        shortForm: product.shortForm,
-        description: product.description,
-        groupId: product.groupId
-      },
-
-      fields: this.getFields()
-    };
-
-
-    const dialogRef = this.dialog.open(
-      MasterFormDialogComponent,
-      {
-        width: '700px',
-        maxWidth: '95vw',
-        data: dialogData,
-        autoFocus: false,
-        panelClass: 'premium-master-dialog'
-      }
-    );
-
-
-    dialogRef.afterClosed().subscribe(result => {
-
-      if (!result) {
-        return;
-      }
-
-
-      const isChanged =
-        product.code !== result.code ||
-        product.shortForm !== result.shortForm ||
-        (product.description || '') !==
-          (result.description || '') ||
-        product.groupId !== result.groupId;
-
-
-      if (!isChanged) {
-
-        this.showError(
-          'No changes were made to the Product'
-        );
-
-        return;
-      }
-
-
-      product.code = result.code;
-      product.shortForm = result.shortForm;
-      product.description = result.description;
-      product.groupId = result.groupId;
-
-
-      this.products = [
-        ...this.products
-      ];
-
-
-      this.showSuccess(
-        'Product updated successfully'
+        values : {
+           code : product.code,
+           shortForm : product.shortForm,
+           description : product.description
+        },
+        fields:this.getFields()
+      };
+      const dialogRef = this.dialog.open(
+        MasterFormDialogComponent,{
+          width : '700px',
+          maxWidth : '90vw',
+          data : dialogData,
+          autoFocus : false,
+          panelClass : 'Premium-master-dialog'
+        }
       );
+      dialogRef.afterClosed().subscribe(result => {
+        if(!result){
+          return;
+        }
 
-    });
-  }
+            // ================================================
+            // CHECK CHANGES
+            // ================================================
+
+            const isChanged = 
+            product.code !== result.code ||
+            product.shortForm !== result.shortForm ||
+           ( product.description || '') !== ( result.description || '' );
+           
+           if(!isChanged){
+            this.showError('No changes were made to the product');
+            return;
+           }
+
+                // ================================================
+                // UPDATE PAYLOAD
+                // ================================================
+
+                const payload :ProductShortCodes = {
+                  code :
+                  result.code?.trim() || '',
+                  shortForm :
+                  result.shortForm?.trim() || '',
+                  description :
+                  result.description?.trim() || ''
+                };
+                  // ================================================
+                  // UPDATE PRODUCT
+                  // ================================================
+
+                  this.productService
+                  .updateProductShortCodes(
+                    product.id!,
+                    payload
+                  )
+                  .subscribe({
+                    next: ()=>{
+                      this.showSuccess('Product update succesfully');
+
+                      //Reaload latest Record from Api
+
+                      this.loadProducts();
+
+                    },
+                    error:(error)=>{
+                      console.error('Failed to update product:',error);
+                      this.showError('Failed to update product');
+                    }
+                  });
+      });
+     }
 
 
   /* =========================================================
@@ -356,15 +327,6 @@ export class ProductComponent {
         type: 'textarea',
         required: false
       },
-
-      {
-        key: 'groupId',
-        label: 'GroupID',
-        type: 'select',
-        required,
-
-        options: this.groupOptions
-      }
 
     ];
   }
