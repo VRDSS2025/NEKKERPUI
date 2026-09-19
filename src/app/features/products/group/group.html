@@ -1,0 +1,26 @@
+<div class="group-page">
+
+  <!-- Back -->
+  <button
+    type="button"
+    class="back-button"
+    (click)="goBack()"
+  >
+    <mat-icon>arrow_back</mat-icon>
+    <span>Back to Products</span>
+  </button>
+
+
+  <!-- Existing master list -->
+  <app-master-list
+    title="Product Groups"
+    description="Manage product group information."
+    icon="category"
+    searchPlaceholder="Search product groups..."
+    [columns]="columns"
+    [data]="groups"
+    (addClicked)="addGroup()"
+    (viewClicked)="viewGroup($event)"
+  ></app-master-list>
+
+</div>

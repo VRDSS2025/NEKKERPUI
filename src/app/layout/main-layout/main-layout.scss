@@ -1,0 +1,97 @@
+/* =========================================
+   MAIN LAYOUT
+   ========================================= */
+
+.main-layout {
+  width: 100%;
+  height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+
+  overflow: hidden;
+
+  background: #f8fafc;
+}
+
+
+/* =========================================
+   NAVBAR
+   ========================================= */
+
+app-navbar {
+  flex: 0 0 64px;
+}
+
+
+/* =========================================
+   LAYOUT BODY
+   ========================================= */
+
+.layout-body {
+  flex: 1 1 auto;
+
+  min-height: 0;
+
+  display: flex;
+
+  overflow: hidden;
+}
+
+
+/* =========================================
+   SIDEBAR
+   ========================================= */
+
+app-sidebar {
+  flex: 0 0 auto;
+
+  height: 100%;
+}
+
+
+/* =========================================
+   MAIN CONTENT AREA
+   ========================================= */
+
+.main-content {
+  flex: 1 1 auto;
+
+  min-width: 0;
+  min-height: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  overflow: hidden;
+}
+
+
+/* =========================================
+   PAGE CONTENT
+   ========================================= */
+
+.page-content {
+  flex: 1 1 auto;
+
+  min-width: 0;
+  min-height: 0;
+
+  padding: 20px;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  box-sizing: border-box;
+}
+
+
+/* =========================================
+   FOOTER
+   ========================================= */
+
+app-footer {
+  flex: 0 0 auto;
+
+  width: 100%;
+}

@@ -1,0 +1,17 @@
+<div class="consignee-page">
+  <button type="button" class="back-button" (click)="goBack()">
+    <mat-icon>arrow_back</mat-icon>
+    <span>Back to Consignee</span>
+  </button>
+
+  <app-master-list
+    title="Consignee"
+    description="Manage consignee information."
+    icon="business"
+    searchPlaceholder="Search consignees..."
+    [columns]="columns"
+    [data]="consignees"
+    (addClicked)="addConsignee()"
+    (viewClicked)="viewConsignee($event)"
+  ></app-master-list>
+</div>

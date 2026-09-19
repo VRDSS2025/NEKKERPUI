@@ -1,0 +1,63 @@
+.group-page {
+  width: 100%;
+}
+
+
+/* =========================================================
+   BACK BUTTON
+   ========================================================= */
+
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+
+  height: 38px;
+
+  margin-bottom: 12px;
+  padding: 0 10px 0 6px;
+
+  border: 0;
+  border-radius: 8px;
+
+  background: transparent;
+
+  color: #64748b;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+
+.back-button mat-icon {
+  width: 20px;
+  height: 20px;
+
+  font-size: 20px;
+}
+
+
+.back-button:hover {
+  background: #e5e0ff;
+  color: #241862;
+
+  transform: translateX(-2px);
+}
+
+
+/* Mobile */
+
+@media (max-width: 600px) {
+
+  .back-button {
+    margin-bottom: 10px;
+  }
+
+}   

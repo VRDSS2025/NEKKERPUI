@@ -1,0 +1,97 @@
+/* ================================
+   FOOTER
+   ================================ */
+
+.app-footer {
+  width: 100%;
+
+  min-height: 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 8px 20px;
+
+  background: #ffffff;
+
+  border-top: 1px solid #e5e7eb;
+
+  box-sizing: border-box;
+}
+
+
+/* ================================
+   FOOTER CONTENT
+   ================================ */
+
+.footer-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  color: #64748b;
+
+  font-size: 12px;
+  font-weight: 400;
+
+  line-height: 1.4;
+
+  text-align: center;
+}
+
+
+/* ================================
+   COPYRIGHT
+   ================================ */
+
+.copyright {
+  color: #64748b;
+}
+
+
+/* ================================
+   SEPARATOR
+   ================================ */
+
+.separator {
+  color: #cbd5e1;
+}
+
+
+/* ================================
+   POWERED BY
+   ================================ */
+
+.powered-by {
+  color: #64748b;
+}
+
+.powered-by strong {
+  color: #241862;
+
+  font-weight: 600;
+}
+
+
+/* ================================
+   RESPONSIVE
+   ================================ */
+
+@media (max-width: 480px) {
+
+  .app-footer {
+    padding: 9px 12px;
+  }
+
+  .footer-content {
+    flex-wrap: wrap;
+
+    gap: 5px;
+
+    font-size: 11px;
+  }
+
+}

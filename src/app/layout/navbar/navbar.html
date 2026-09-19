@@ -1,0 +1,106 @@
+<nav class="navbar">
+
+  <!-- =========================================
+       LEFT SECTION
+       ========================================= -->
+
+  <div class="navbar-left">
+
+    <!-- Menu Button -->
+
+    <button
+      type="button"
+      class="menu-button"
+      aria-label="Toggle navigation"
+      (click)="toggleMenu()"
+    >
+      <mat-icon>menu</mat-icon>
+    </button>
+
+
+    <!-- Company Brand -->
+
+    <div class="navbar-brand">
+
+      <img
+        src="/images/nekkantilogo.jpeg"
+        alt="Company Logo"
+        class="navbar-logo"
+      />
+
+      <span class="company-name">
+        Nekkanti ERP
+      </span>
+
+    </div>
+
+  </div>
+
+
+  <!-- =========================================
+       RIGHT SECTION
+       ========================================= -->
+
+  <div class="navbar-right">
+
+    <!-- Profile Wrapper -->
+
+    <div class="profile-wrapper">
+
+      <!-- Profile Button -->
+
+      <button
+        type="button"
+        class="profile-button"
+        aria-label="User profile"
+        (click)="toggleProfileMenu()"
+      >
+
+        <mat-icon class="profile-icon">
+          account_circle
+        </mat-icon>
+
+        <span class="username">
+          Admin
+        </span>
+
+        <mat-icon class="dropdown-icon">
+          keyboard_arrow_down
+        </mat-icon>
+
+      </button>
+
+
+      <!-- =========================================
+           PROFILE DROPDOWN
+           ========================================= -->
+
+      @if (profileMenuOpen) {
+
+        <div class="profile-dropdown">
+
+          <button
+            type="button"
+            class="dropdown-item logout-item"
+            (click)="logout()"
+          >
+
+            <mat-icon>
+              logout
+            </mat-icon>
+
+            <span>
+              Logout
+            </span>
+
+          </button>
+
+        </div>
+
+      }
+
+    </div>
+
+  </div>
+
+</nav>

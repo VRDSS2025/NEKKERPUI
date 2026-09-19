@@ -1,0 +1,75 @@
+<div class="consignee-page">
+
+  <!-- Page Header -->
+  <div class="page-header">
+
+    <div>
+      <h1>Consignee</h1>
+
+      <p>
+        Manage consignee information and related configurations.
+      </p>
+    </div>
+
+  </div>
+
+
+  <!-- Widgets -->
+  <div class="consignee-grid">
+
+    <!-- Consignee -->
+    <div
+      class="consignee-card"
+      (click)="openPage('/consignee/consigne')"
+    >
+
+      <div class="card-icon">
+        <mat-icon>person</mat-icon>
+      </div>
+
+      <div class="card-content">
+
+        <h3>Consignee</h3>
+
+        <p>
+          Manage consignee information
+        </p>
+
+      </div>
+
+      <mat-icon class="arrow-icon">
+        arrow_forward
+      </mat-icon>
+
+    </div>
+
+
+    <!-- DS Consignee -->
+    <div
+      class="consignee-card"
+      (click)="openPage('/consignee/ds-consignee')"
+    >
+
+      <div class="card-icon">
+        <mat-icon>groups</mat-icon>
+      </div>
+
+      <div class="card-content">
+
+        <h3>DS Consignee</h3>
+
+        <p>
+          Manage DS consignee information
+        </p>
+
+      </div>
+
+      <mat-icon class="arrow-icon">
+        arrow_forward
+      </mat-icon>
+
+    </div>
+
+  </div>
+
+</div>

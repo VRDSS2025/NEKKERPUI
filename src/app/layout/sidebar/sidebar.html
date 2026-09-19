@@ -1,0 +1,87 @@
+<aside class="sidebar">
+
+  <!-- Sidebar Header -->
+  <div class="sidebar-header">
+    <span class="sidebar-title">Menu</span>
+  </div>
+
+
+  <!-- Sidebar Navigation -->
+  <nav class="sidebar-nav">
+
+    <!-- =========================
+         MASTER
+         ========================= -->
+
+    <button
+      type="button"
+      class="menu-item master-menu"
+      [class.active]="masterOpen"
+      (click)="toggleMaster()"
+    >
+
+      <mat-icon class="menu-icon">
+        dashboard_customize
+      </mat-icon>
+
+      <span class="menu-text">
+        Master
+      </span>
+
+      <mat-icon
+        class="expand-icon"
+        [class.rotated]="masterOpen"
+      >
+        expand_more
+      </mat-icon>
+
+    </button>
+
+
+    <!-- =========================
+         MASTER SUB MENU
+         ========================= -->
+
+    @if (masterOpen) {
+
+      <div class="submenu">
+
+        <!-- Products -->
+        <a
+          routerLink="/products"
+          routerLinkActive="active"
+          class="submenu-item"
+        >
+          <mat-icon>inventory_2</mat-icon>
+          <span>Products</span>
+        </a>
+
+
+        <!-- Consignee -->
+        <a
+          routerLink="/consignee"
+          routerLinkActive="active"
+          class="submenu-item"
+        >
+          <mat-icon>person</mat-icon>
+          <span>Consignee</span>
+        </a>
+
+
+        <!-- List of Countries -->
+        <a
+          routerLink="/countries"
+          routerLinkActive="active"
+          class="submenu-item"
+        >
+          <mat-icon>public</mat-icon>
+          <span>List of Countries</span>
+        </a>
+
+      </div>
+
+    }
+
+  </nav>
+
+</aside>

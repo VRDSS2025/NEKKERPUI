@@ -1,0 +1,23 @@
+<div class="packing-style-page">
+
+  <button
+    type="button"
+    class="back-button"
+    (click)="goBack()"
+  >
+    <mat-icon>arrow_back</mat-icon>
+    <span>Back to Products</span>
+  </button>
+
+  <app-master-list
+    title="Packing Styles"
+    description="Manage packing style information."
+    icon="inventory_2"
+    searchPlaceholder="Search packing styles..."
+    [columns]="columns"
+    [data]="packingStyles"
+    (addClicked)="addPackingStyle()"
+    (viewClicked)="viewPackingStyle($event)"
+  ></app-master-list>
+
+</div>

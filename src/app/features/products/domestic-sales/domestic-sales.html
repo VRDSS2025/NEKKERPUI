@@ -1,0 +1,23 @@
+<div class="domestic-sales-page">
+
+  <button
+    type="button"
+    class="back-button"
+    (click)="goBack()"
+  >
+    <mat-icon>arrow_back</mat-icon>
+    <span>Back to Products</span>
+  </button>
+
+  <app-master-list
+    title="Domestic Sales"
+    description="Manage domestic sales information."
+    icon="storefront"
+    searchPlaceholder="Search domestic sales..."
+    [columns]="columns"
+    [data]="domesticSales"
+    (addClicked)="addDomesticSale()"
+    (viewClicked)="viewDomesticSale($event)"
+  ></app-master-list>
+
+</div> 

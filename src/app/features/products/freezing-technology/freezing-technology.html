@@ -1,0 +1,26 @@
+<p>freezing-technology works!</p>
+<div class="freezing-technology-page">
+
+  <button
+    type="button"
+    class="back-button"
+    (click)="goBack()">
+
+    <mat-icon>arrow_back</mat-icon>
+
+    <span>Back to Products</span>
+
+  </button>
+
+  <app-master-list
+    title="Freezing Technology"
+    description="Manage freezing technology information."
+    icon="ac_unit"
+    searchPlaceholder="Search freezing technology..."
+    [columns]="columns"
+    [data]="freezingTechnologies"
+    (addClicked)="addFreezingTechnology()"
+    (viewClicked)="viewFreezingTechnology($event)">
+  </app-master-list>
+
+</div>

@@ -1,1 +1,655 @@
-/* You can add global styles to this file, and also import other style files */
+@use '@angular/material' as mat;
+
+@include mat.core();
+
+/* =========================================================
+   ANGULAR MATERIAL THEME
+   ========================================================= */
+
+$primary-palette: mat.m2-define-palette(mat.$m2-blue-palette);
+$accent-palette: mat.m2-define-palette(mat.$m2-indigo-palette);
+$warn-palette: mat.m2-define-palette(mat.$m2-red-palette);
+
+$app-theme: mat.m2-define-light-theme((
+  color: (
+    primary: $primary-palette,
+    accent: $accent-palette,
+    warn: $warn-palette
+  ),
+  typography: mat.m2-define-typography-config(),
+  density: 0
+));
+
+@include mat.all-component-themes($app-theme);
+
+
+/* =========================================================
+   GLOBAL
+   ========================================================= */
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #ffffff;
+  color: #111827;
+  min-height: 100vh;
+}
+
+app-root {
+  display: block;
+  min-height: 100vh;
+}
+
+
+/* =========================================================
+   PREMIUM MASTER DIALOG
+   ========================================================= */
+
+.premium-master-dialog .mat-mdc-dialog-surface {
+  width: 100% !important;
+
+  height: auto !important;
+  max-height: 90vh !important;
+
+  padding: 0 !important;
+  overflow: hidden !important;
+
+  border-radius: 18px !important;
+  background: #ffffff !important;
+}
+
+
+/* =========================================================
+   PREMIUM FORM FIELD
+   ========================================================= */
+
+.premium-master-dialog .premium-field {
+  width: 100% !important;
+
+  --mdc-outlined-text-field-container-shape: 14px;
+  --mdc-outlined-text-field-outline-width: 1px;
+  --mdc-outlined-text-field-focus-outline-width: 2px;
+
+  --mdc-outlined-text-field-outline-color: #cbd5e1;
+  --mdc-outlined-text-field-hover-outline-color: #94a3b8;
+  --mdc-outlined-text-field-focus-outline-color: #2563eb;
+
+  --mdc-outlined-text-field-container-color: #ffffff;
+
+  margin-bottom: 0 !important;
+}
+
+
+/* =========================================================
+   FORM FIELD WRAPPER
+   ========================================================= */
+
+.premium-master-dialog .premium-field .mat-mdc-text-field-wrapper {
+  min-height: 54px !important;
+  padding: 0 !important;
+
+  background: #ffffff !important;
+  border-radius: 14px !important;
+
+  box-sizing: border-box !important;
+
+  transition:
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
+}
+
+
+/* =========================================================
+   FORM FIELD FLEX
+   ========================================================= */
+
+.premium-master-dialog .premium-field .mat-mdc-form-field-flex {
+  min-height: 54px !important;
+  align-items: center !important;
+}
+
+
+/* =========================================================
+   FORM FIELD INFIX
+   ========================================================= */
+
+.premium-master-dialog .premium-field .mat-mdc-form-field-infix {
+  min-height: 54px !important;
+  width: 100% !important;
+
+  padding-top: 9px !important;
+  padding-bottom: 9px !important;
+
+  box-sizing: border-box !important;
+}
+
+
+/* =========================================================
+   TEXT INPUT
+   ========================================================= */
+
+.premium-master-dialog .premium-field input.mat-mdc-input-element {
+  width: 100% !important;
+
+  height: 36px !important;
+  min-height: 36px !important;
+
+  margin: 0 !important;
+
+  /* Increased horizontal spacing */
+  padding: 7px 14px !important;
+
+  box-sizing: border-box !important;
+
+  font-family: inherit !important;
+  font-size: 14px !important;
+  line-height: 22px !important;
+  font-weight: 400 !important;
+
+  color: #172033 !important;
+
+  caret-color: #2563eb !important;
+}
+
+
+/* =========================================================
+   TEXTAREA
+   ========================================================= */
+
+.premium-master-dialog .premium-field textarea.mat-mdc-input-element {
+  width: 100% !important;
+
+  min-height: 105px !important;
+
+  margin: 0 !important;
+
+  /* Increased horizontal spacing */
+  padding: 10px 14px !important;
+
+  box-sizing: border-box !important;
+
+  font-family: inherit !important;
+  font-size: 14px !important;
+  line-height: 1.55 !important;
+
+  color: #172033 !important;
+
+  caret-color: #2563eb !important;
+
+  resize: vertical !important;
+}
+
+
+/* =========================================================
+   PLACEHOLDER
+   ========================================================= */
+
+.premium-master-dialog
+.premium-field
+input.mat-mdc-input-element::placeholder,
+
+.premium-master-dialog
+.premium-field
+textarea.mat-mdc-input-element::placeholder {
+  color: #9aa4b2 !important;
+  opacity: 1 !important;
+}
+
+
+/* =========================================================
+   OUTLINED FIELD
+   ========================================================= */
+
+.premium-master-dialog
+.premium-field
+.mat-mdc-notched-outline {
+  border-radius: 14px !important;
+  overflow: hidden !important;
+}
+
+
+/* =========================================================
+   OUTLINE LEFT
+   ========================================================= */
+
+.premium-master-dialog
+.premium-field
+.mat-mdc-notched-outline__leading {
+  border-top-left-radius: 14px !important;
+  border-bottom-left-radius: 14px !important;
+}
+
+
+/* =========================================================
+   OUTLINE RIGHT
+   ========================================================= */
+
+.premium-master-dialog
+.premium-field
+.mat-mdc-notched-outline__trailing {
+  border-top-right-radius: 14px !important;
+  border-bottom-right-radius: 14px !important;
+}
+
+
+/* =========================================================
+   HOVER STATE
+   ========================================================= */
+
+.premium-master-dialog
+.premium-field:hover
+.mat-mdc-notched-outline__leading,
+
+.premium-master-dialog
+.premium-field:hover
+.mat-mdc-notched-outline__notch,
+
+.premium-master-dialog
+.premium-field:hover
+.mat-mdc-notched-outline__trailing {
+  border-color: #94a3b8 !important;
+}
+
+
+/* =========================================================
+   FOCUS STATE
+   ========================================================= */
+
+.premium-master-dialog
+.premium-field.mat-focused
+.mat-mdc-notched-outline__leading,
+
+.premium-master-dialog
+.premium-field.mat-focused
+.mat-mdc-notched-outline__notch,
+
+.premium-master-dialog
+.premium-field.mat-focused
+.mat-mdc-notched-outline__trailing {
+  border-color: #2563eb !important;
+  border-width: 2px !important;
+}
+
+
+/* =========================================================
+   FOCUS GLOW
+   ========================================================= */
+
+.premium-master-dialog
+.premium-field.mat-focused
+.mat-mdc-text-field-wrapper {
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08) !important;
+}
+
+
+/* =========================================================
+   REMOVE DEFAULT MATERIAL OVERLAY
+   ========================================================= */
+
+.premium-master-dialog
+.premium-field
+.mat-mdc-form-field-focus-overlay {
+  background: transparent !important;
+  opacity: 0 !important;
+}
+
+
+/* =========================================================
+   INVALID FIELD
+   ========================================================= */
+
+.premium-master-dialog
+.premium-field.mat-form-field-invalid
+.mat-mdc-notched-outline__leading,
+
+.premium-master-dialog
+.premium-field.mat-form-field-invalid
+.mat-mdc-notched-outline__notch,
+
+.premium-master-dialog
+.premium-field.mat-form-field-invalid
+.mat-mdc-notched-outline__trailing {
+  border-color: #dc2626 !important;
+}
+
+
+/* =========================================================
+   VALIDATION ERROR
+   ========================================================= */
+
+.premium-master-dialog
+.premium-field
+.mat-mdc-form-field-error {
+  margin-top: 3px !important;
+
+  color: #dc2626 !important;
+
+  font-size: 12px !important;
+  line-height: 16px !important;
+}
+
+
+/* =========================================================
+   PREMIUM SNACKBAR - SUCCESS
+   ========================================================= */
+
+.mat-mdc-snack-bar-container.success-snackbar {
+  .mdc-snackbar__surface {
+    background-color: #16a34a !important;
+  }
+
+  .mat-mdc-snack-bar-label {
+    color: #ffffff !important;
+  }
+
+  .mat-mdc-button {
+    background: transparent !important;
+    background-color: transparent !important;
+
+    cursor: pointer !important;
+  }
+
+  .mat-mdc-button .mdc-button__label {
+    color: #ffffff !important;
+  }
+
+  .mat-mdc-button:hover {
+    background: transparent !important;
+    background-color: transparent !important;
+  }
+}
+
+
+/* =========================================================
+   PREMIUM SNACKBAR - ERROR
+   ========================================================= */
+
+.mat-mdc-snack-bar-container.error-snackbar {
+  .mdc-snackbar__surface {
+    background-color: #dc2626 !important;
+  }
+
+  .mat-mdc-snack-bar-label {
+    color: #ffffff !important;
+  }
+
+  .mat-mdc-button {
+    background: transparent !important;
+    background-color: transparent !important;
+
+    cursor: pointer !important;
+  }
+
+  .mat-mdc-button .mdc-button__label {
+    color: #ffffff !important;
+  }
+
+  .mat-mdc-button:hover {
+    background: transparent !important;
+    background-color: transparent !important;
+  }
+}
+
+
+/* =========================================================
+   PREMIUM SNACKBAR - WARNING
+   ========================================================= */
+
+.mat-mdc-snack-bar-container.warning-snackbar {
+  .mdc-snackbar__surface {
+    background-color: #f59e0b !important;
+  }
+
+  .mat-mdc-snack-bar-label {
+    color: #ffffff !important;
+  }
+
+  .mat-mdc-button {
+    background: transparent !important;
+    background-color: transparent !important;
+
+    cursor: pointer !important;
+  }
+
+  .mat-mdc-button .mdc-button__label {
+    color: #ffffff !important;
+  }
+
+  .mat-mdc-button:hover {
+    background: transparent !important;
+    background-color: transparent !important;
+  }
+}
+
+
+/* =========================================================
+   GLOBAL SCROLLBAR
+   ========================================================= */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f8fafc;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+
+/* =========================================================
+   TEXT SELECTION
+   ========================================================= */
+
+::selection {
+  background: rgba(37, 99, 235, 0.16);
+  color: #111827;
+}
+
+
+/* =========================================================
+   RESPONSIVE DIALOG
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+  .premium-master-dialog .mat-mdc-dialog-surface {
+    border-radius: 14px !important;
+  }
+
+  .premium-master-dialog .premium-field input.mat-mdc-input-element {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+
+  .premium-master-dialog .premium-field textarea.mat-mdc-input-element {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 480px) {
+
+  .premium-master-dialog .mat-mdc-dialog-surface {
+    border-radius: 12px !important;
+  }
+
+  .premium-master-dialog .premium-field .mat-mdc-text-field-wrapper {
+    min-height: 52px !important;
+  }
+
+  .premium-master-dialog .premium-field .mat-mdc-form-field-flex {
+    min-height: 52px !important;
+  }
+
+  .premium-master-dialog .premium-field .mat-mdc-form-field-infix {
+    min-height: 52px !important;
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+  }
+
+  .premium-master-dialog .premium-field input.mat-mdc-input-element {
+    font-size: 13px !important;
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+
+  .premium-master-dialog .premium-field textarea.mat-mdc-input-element {
+    font-size: 13px !important;
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+}
+
+
+
+
+
+.dialog-footer {
+  flex: 0 0 auto;
+
+  min-height: 72px;
+  padding: 14px 28px !important;
+  margin: 0 !important;
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+
+  border-top: 1px solid #e5e7eb;
+  box-sizing: border-box;
+}
+
+.premium-master-dialog .mat-mdc-dialog-surface {
+  width: 100% !important;
+  height: 90vh !important;
+  max-height: 90vh !important;
+
+  padding: 0 !important;
+  margin: 0 !important;
+
+  overflow: hidden !important;
+
+  border-radius: 18px !important;
+  background: #ffffff !important;
+}
+
+/* =========================================================
+   MASTER DIALOG - CONTENT BASED HEIGHT
+   ========================================================= */
+
+.premium-master-dialog.mat-mdc-dialog-panel {
+  max-height: 90vh !important;
+}
+
+.premium-master-dialog .mat-mdc-dialog-container {
+  height: auto !important;
+  max-height: 90vh !important;
+  min-height: 0 !important;
+
+  padding: 0 !important;
+}
+
+.premium-master-dialog .mat-mdc-dialog-surface {
+  width: 100% !important;
+
+  height: auto !important;
+  max-height: 90vh !important;
+  min-height: 0 !important;
+
+  padding: 0 !important;
+  margin: 0 !important;
+
+  overflow: hidden !important;
+
+  border-radius: 18px !important;
+}
+
+
+/* =========================================================
+   MASTER DIALOG CONTAINER
+   ========================================================= */
+
+.premium-master-dialog .dialog-container {
+  width: 100% !important;
+
+  height: auto !important;
+  max-height: 90vh !important;
+  min-height: 0 !important;
+
+  display: flex !important;
+  flex-direction: column !important;
+
+  overflow: hidden !important;
+}
+
+
+/* =========================================================
+   MASTER DIALOG FORM
+   ========================================================= */
+
+.premium-master-dialog .dialog-form {
+  width: 100% !important;
+
+  height: auto !important;
+  min-height: 0 !important;
+
+  max-height: calc(90vh - 165px) !important;
+
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+
+  padding: 28px !important;
+
+  box-sizing: border-box !important;
+}
+
+
+/* =========================================================
+   MASTER DIALOG FOOTER
+   ========================================================= */
+
+.premium-master-dialog .dialog-footer {
+  flex: 0 0 auto !important;
+
+  width: 100% !important;
+
+  min-height: 72px !important;
+
+  margin: 0 !important;
+  padding: 14px 28px !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+
+  gap: 10px !important;
+
+  box-sizing: border-box !important;
+}

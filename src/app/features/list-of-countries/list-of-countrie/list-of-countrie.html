@@ -1,0 +1,35 @@
+<div class="countries-page">
+
+  <!-- =========================================
+       BACK TO HOME
+       ========================================= -->
+
+  <button
+    type="button"
+    class="back-button"
+    (click)="goBack()"
+  >
+    <mat-icon>arrow_back</mat-icon>
+
+    <span>
+      Back to List Of Countries
+    </span>
+  </button>
+
+
+  <!-- =========================================
+       COUNTRY MASTER LIST
+       ========================================= -->
+
+  <app-master-list
+    title="Countries"
+    description="Manage country information."
+    icon="public"
+    searchPlaceholder="Search countries..."
+    [columns]="columns"
+    [data]="countries"
+    (addClicked)="addCountry()"
+    (viewClicked)="viewCountry($event)"
+  ></app-master-list>
+
+</div>

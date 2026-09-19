@@ -1,0 +1,23 @@
+<div class="brand-page">
+
+  <button
+    type="button"
+    class="back-button"
+    (click)="goBack()"
+  >
+    <mat-icon>arrow_back</mat-icon>
+    <span>Back to Products</span>
+  </button>
+
+  <app-master-list
+    title="Brands"
+    description="Manage brand information."
+    icon="branding_watermark"
+    searchPlaceholder="Search brands..."
+    [columns]="columns"
+    [data]="brands"
+    (addClicked)="addBrand()"
+    (viewClicked)="viewBrand($event)"
+  ></app-master-list>
+
+</div>

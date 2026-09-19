@@ -1,0 +1,25 @@
+<div class="sub-product-form-page">
+
+  <button
+    type="button"
+    class="back-button"
+    (click)="goBack()">
+
+    <mat-icon>arrow_back</mat-icon>
+
+    <span>Back to Products</span>
+
+  </button>
+
+  <app-master-list
+    title="Sub Product Form"
+    description="Manage sub product form information."
+    icon="format_shapes"
+    searchPlaceholder="Search sub product forms..."
+    [columns]="columns"
+    [data]="subProductForms"
+    (addClicked)="addSubProductForm()"
+    (viewClicked)="viewSubProductForm($event)">
+  </app-master-list>
+
+</div>

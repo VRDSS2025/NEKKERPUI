@@ -1,0 +1,270 @@
+<div class="master-page">
+
+  <!-- ================================
+       PAGE HEADER
+       ================================ -->
+
+  <div class="page-header">
+
+    <div class="page-title-section">
+
+      <div class="title-icon">
+        <mat-icon>{{ icon }}</mat-icon>
+      </div>
+
+      <div>
+        <h1>{{ title }}</h1>
+
+        @if (description) {
+          <p>{{ description }}</p>
+        }
+      </div>
+
+    </div>
+
+
+    <!-- Add Button -->
+
+    <button
+      mat-flat-button
+      class="add-button"
+      type="button"
+      (click)="add()"
+    >
+      <mat-icon>add</mat-icon>
+      Add
+    </button>
+
+  </div>
+
+
+  <!-- ================================
+       CONTENT CARD
+       ================================ -->
+
+  <div class="content-card">
+
+    <!-- ================================
+         TABLE TOOLBAR
+         ================================ -->
+
+    <div class="table-toolbar">
+
+      <!-- Record Count -->
+
+      <div class="record-count">
+
+        <span class="count-number">
+          {{ filteredData.length }}
+        </span>
+
+        <span class="count-label">
+          Records
+        </span>
+
+      </div>
+
+
+      <!-- Search -->
+
+      <mat-form-field
+        appearance="outline"
+        class="search-field"
+      >
+
+        <mat-label>
+          {{ searchPlaceholder }}
+        </mat-label>
+
+        <mat-icon matPrefix>
+          search
+        </mat-icon>
+
+        <input
+          matInput
+          type="text"
+          (input)="onSearch($event)"
+        />
+
+      </mat-form-field>
+
+    </div>
+
+
+    <!-- ================================
+         TABLE CONTAINER
+         ================================ -->
+
+    <div class="table-container">
+
+      @if (filteredData.length > 0) {
+
+        <table class="master-table">
+
+          <!-- ================================
+               TABLE HEADER
+               ================================ -->
+
+          <thead>
+
+            <tr>
+
+              <th class="serial-column">
+                #
+              </th>
+
+              @for (column of columns; track column.key) {
+
+                <th>
+                  {{ column.label }}
+                </th>
+
+              }
+
+              <th class="action-column">
+                Action
+              </th>
+
+            </tr>
+
+          </thead>
+
+
+          <!-- ================================
+               TABLE BODY
+               ================================ -->
+
+          <tbody>
+
+            @for (
+              row of filteredData;
+              track $index;
+              let i = $index
+            ) {
+
+              <tr>
+
+                <!-- Serial Number -->
+
+                <td class="serial-column">
+                  {{ i + 1 }}
+                </td>
+
+
+                <!-- Dynamic Columns -->
+
+                @for (
+                  column of columns;
+                  track column.key
+                ) {
+
+                  <td>
+
+                    <span class="cell-value">
+                      {{ row[column.key] }}
+                    </span>
+
+                  </td>
+
+                }
+
+
+                <!-- ================================
+                     ACTIONS
+                     ================================ -->
+
+                <td class="action-column">
+
+                  <div class="action-buttons">
+
+                    <!-- Primary Action -->
+
+                    <button
+                      type="button"
+                      class="action-button primary-action"
+                      aria-label="View record"
+                      (click)="view(row)"
+                    >
+
+                      <mat-icon>
+                        visibility
+                      </mat-icon>
+
+                      <span>
+                        {{ primaryActionLabel }}
+                      </span>
+
+                    </button>
+
+
+                    <!-- Secondary Action -->
+
+                    @if (secondaryActionLabel) {
+
+                      <button
+                        type="button"
+                        class="action-button secondary-action"
+                        aria-label="View address"
+                        (click)="secondaryAction(row)"
+                      >
+
+                        <mat-icon>
+                          location_on
+                        </mat-icon>
+
+                        <span>
+                          {{ secondaryActionLabel }}
+                        </span>
+
+                      </button>
+
+                    }
+
+                  </div>
+
+                </td>
+
+              </tr>
+
+            }
+
+          </tbody>
+
+        </table>
+
+      }
+
+
+      <!-- ================================
+           EMPTY STATE
+           ================================ -->
+
+      @if (filteredData.length === 0) {
+
+        <div class="empty-state">
+
+          <div class="empty-icon">
+
+            <mat-icon>
+              search_off
+            </mat-icon>
+
+          </div>
+
+          <h3>
+            No records found
+          </h3>
+
+          <p>
+            Try changing your search criteria.
+          </p>
+
+        </div>
+
+      }
+
+    </div>
+
+  </div>
+
+</div>

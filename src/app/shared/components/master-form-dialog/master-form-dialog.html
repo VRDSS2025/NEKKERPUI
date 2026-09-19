@@ -1,0 +1,223 @@
+<div class="dialog-container">
+
+  <!-- =====================================================
+       HEADER
+       ===================================================== -->
+
+  <div class="dialog-header">
+
+    <div class="header-left">
+
+      <div class="header-icon">
+
+        <mat-icon>
+          @if (isViewMode) {
+            visibility
+          } @else if (isEditMode) {
+            edit
+          } @else {
+            add_circle_outline
+          }
+        </mat-icon>
+
+      </div>
+
+      <div class="header-content">
+
+        <h2>
+          {{ data.title }}
+        </h2>
+
+        <p>
+          @if (isViewMode) {
+            View master data information.
+          } @else if (isEditMode) {
+            Update master data information.
+          } @else {
+            Add new information to the master data.
+          }
+        </p>
+
+      </div>
+
+    </div>
+
+    <button
+      type="button"
+      class="close-button"
+      aria-label="Close"
+      (click)="close()"
+    >
+      <mat-icon>close</mat-icon>
+    </button>
+
+  </div>
+
+
+  <!-- =====================================================
+       FORM
+       ===================================================== -->
+
+  <form
+    [formGroup]="form"
+    (ngSubmit)="save()"
+    class="dialog-form"
+  >
+
+    <div class="form-grid">
+
+      @for (field of data.fields; track field.key) {
+
+        <div
+          class="form-field-wrapper"
+          [class.full-width]="field.type === 'textarea'"
+        >
+
+          <label class="field-label">
+
+            {{ field.label }}
+
+            @if (field.required && !isViewMode) {
+              <span class="required-star">*</span>
+            }
+
+          </label>
+          @if (field.type === 'checkbox') {
+
+  <div class="checkbox-field">
+
+    <mat-checkbox
+      [formControlName]="field.key"
+    >
+                {{ field.label }}
+              </mat-checkbox>
+
+            </div>
+
+          }
+             @else if (field.type === 'textarea') {
+
+            <mat-form-field
+              appearance="outline"
+              class="premium-field"
+            >
+
+              <textarea
+                matInput
+                [formControlName]="field.key"
+                [placeholder]="field.placeholder || ''"
+                rows="4"
+              ></textarea>
+
+              @if (isInvalid(field.key)) {
+
+                <mat-error>
+                  {{ field.label }} is required
+                </mat-error>
+
+              }
+
+            </mat-form-field>
+
+          } @else {
+
+            <mat-form-field
+              appearance="outline"
+              class="premium-field"
+            >
+
+              <input
+                matInput
+                [type]="field.type || 'text'"
+                [formControlName]="field.key"
+                [placeholder]="field.placeholder || ''"
+              />
+
+              @if (isInvalid(field.key)) {
+
+                <mat-error>
+                  {{ field.label }} is required
+                </mat-error>
+
+              }
+
+            </mat-form-field>
+
+          }
+
+        </div>
+
+      }
+
+    </div>
+
+  </form>
+
+
+  <!-- =====================================================
+       FOOTER
+       ===================================================== -->
+
+  <div class="dialog-footer">
+
+    @if (isViewMode) {
+
+      <button
+        type="button"
+        class="cancel-button"
+        (click)="close()"
+      >
+        Close
+      </button>
+
+      <button
+        type="button"
+        class="save-button"
+        (click)="edit()"
+      >
+
+        <mat-icon>edit</mat-icon>
+
+        <span>Edit</span>
+
+      </button>
+
+    } @else {
+
+      <button
+        type="button"
+        class="cancel-button"
+        (click)="close()"
+      >
+        Cancel
+      </button>
+
+      <button
+        type="button"
+        class="save-button"
+        (click)="save()"
+      >
+
+        <mat-icon>
+          @if (isEditMode) {
+            save
+          } @else {
+            check
+          }
+        </mat-icon>
+
+        <span>
+          @if (isEditMode) {
+            Update
+          } @else {
+            Add
+          }
+        </span>
+
+      </button>
+
+    }
+
+  </div>
+
+</div>

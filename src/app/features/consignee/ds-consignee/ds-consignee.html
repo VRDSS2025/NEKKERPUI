@@ -1,0 +1,26 @@
+<div class="ds-consignee-page">
+
+  <button
+    type="button"
+    class="back-button"
+    (click)="goBack()"
+  >
+    <mat-icon>arrow_back</mat-icon>
+    <span>Back to Consignee</span>
+  </button>
+
+  <app-master-list
+    title="DS Consignee"
+    description="Manage DS consignee information."
+    icon="business"
+    searchPlaceholder="Search DS consignee..."
+    primaryActionLabel="View"
+    secondaryActionLabel="View Address"
+    [columns]="columns"
+    [data]="consigneeList"
+    (addClicked)="addConsignee()"
+    (viewClicked)="viewConsignee($event)"
+    (secondaryActionClicked)="viewAddress($event)"
+  ></app-master-list>
+
+</div>

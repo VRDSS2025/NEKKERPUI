@@ -1,0 +1,733 @@
+<div class="product-page">
+
+  <!-- =====================================================
+       BACK TO PRODUCTS
+       ===================================================== -->
+
+  <button
+    type="button"
+    class="back-button"
+    (click)="goBack()"
+  >
+    <mat-icon>arrow_back</mat-icon>
+    <span>Back to Products</span>
+  </button>
+
+
+  <!-- =====================================================
+       PRODUCT MASTER LIST
+       ===================================================== -->
+
+  <app-master-list
+    title="Product Master"
+    description="Manage product master information."
+    icon="inventory_2"
+    searchPlaceholder="Search products..."
+    [columns]="columns"
+    [data]="products"
+    (addClicked)="addProduct()"
+    (viewClicked)="viewProduct($event)"
+  ></app-master-list>
+
+
+  <!-- =====================================================
+       PRODUCT MASTER FORM
+       ===================================================== -->
+
+  @if (showForm) {
+
+    <div
+      class="product-form-backdrop"
+      (click)="closeForm()"
+    >
+
+      <div
+        class="product-form-dialog"
+        (click)="$event.stopPropagation()"
+      >
+
+        <!-- =================================================
+             HEADER
+             ================================================= -->
+
+        <div class="dialog-header">
+
+          <div class="header-left">
+
+            <div class="header-icon">
+
+              <mat-icon>
+                @if (isViewMode) {
+                  visibility
+                } @else if (isEditMode) {
+                  edit
+                } @else {
+                  add_circle_outline
+                }
+              </mat-icon>
+
+            </div>
+
+            <div class="header-content">
+
+              <h2>
+                @if (isViewMode) {
+                  Product Details
+                } @else if (isEditMode) {
+                  Edit Product
+                } @else {
+                  Add Product
+                }
+              </h2>
+
+              <p>
+                @if (isViewMode) {
+                  View product master information.
+                } @else if (isEditMode) {
+                  Update product master information.
+                } @else {
+                  Add new product master information.
+                }
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <button
+            type="button"
+            class="close-button"
+            aria-label="Close"
+            (click)="closeForm()"
+          >
+            <mat-icon>close</mat-icon>
+          </button>
+
+        </div>
+
+
+        <!-- =================================================
+             FORM
+             ================================================= -->
+
+        <form
+          [formGroup]="form"
+          (ngSubmit)="saveProduct()"
+          class="product-form"
+        >
+
+          <div class="form-grid">
+
+            <!-- =============================================
+                 LEFT COLUMN
+                 ============================================= -->
+
+            <div class="form-column">
+
+              <!-- Product Code -->
+
+              <div class="form-field-wrapper">
+
+                <label class="field-label">
+                  Product Code
+                  <span class="required-star">*</span>
+                </label>
+
+                <input
+                  type="text"
+                  formControlName="productCode"
+                  placeholder="Enter product code"
+                />
+
+                @if (isInvalid('productCode')) {
+                  <small class="error-text">
+                    Product Code is required
+                  </small>
+                }
+
+              </div>
+
+
+              <!-- Product Group -->
+
+              <div class="form-field-wrapper">
+
+                <label class="field-label">
+                  Product Group
+                  <span class="required-star">*</span>
+                </label>
+
+                <div class="select-row">
+
+                  <select formControlName="productGroup">
+
+                    <option value="">--Select--</option>
+                    <option value="SHRIMPS">SHRIMPS</option>
+                    <option value="FISH">FISH</option>
+                    <option value="SQUID">SQUID</option>
+
+                  </select>
+
+                  @if (!isViewMode) {
+                    <button
+                      type="button"
+                      class="add-new-button"
+                      (click)="addNew('Product Group')"
+                    >
+                      Add New
+                    </button>
+                  }
+
+                </div>
+
+              </div>
+
+
+              <!-- Species -->
+
+              <div class="form-field-wrapper">
+
+                <label class="field-label">
+                  Species
+                  <span class="required-star">*</span>
+                </label>
+
+                <div class="select-row">
+
+                  <select formControlName="species">
+
+                    <option value="">--Select--</option>
+                    <option value="SEA CAUGHT">SEA CAUGHT</option>
+                    <option value="FARMED">FARMED</option>
+
+                  </select>
+
+                  @if (!isViewMode) {
+                    <button
+                      type="button"
+                      class="add-new-button"
+                      (click)="addNew('Species')"
+                    >
+                      Add New
+                    </button>
+                  }
+
+                </div>
+
+              </div>
+
+
+              <!-- Product Form -->
+
+              <div class="form-field-wrapper">
+
+                <label class="field-label">
+                  Product Form
+                  <span class="required-star">*</span>
+                </label>
+
+                <div class="select-row">
+
+                  <select formControlName="productForm">
+
+                    <option value="">--Select--</option>
+                    <option value="HEAD ON SHELL ON">
+                      HEAD ON SHELL ON
+                    </option>
+                    <option value="HEADLESS">
+                      HEADLESS
+                    </option>
+
+                  </select>
+
+                  @if (!isViewMode) {
+                    <button
+                      type="button"
+                      class="add-new-button"
+                      (click)="addNew('Product Form')"
+                    >
+                      Add New
+                    </button>
+                  }
+
+                </div>
+
+              </div>
+
+
+              <!-- Freezing Tech -->
+
+              <div class="form-field-wrapper">
+
+                <label class="field-label">
+                  Freezing Tech
+                  <span class="required-star">*</span>
+                </label>
+
+                <div class="select-row">
+
+                  <select formControlName="freezingTech">
+
+                    <option value="">--Select--</option>
+                    <option value="INDIVIDUALLY QUICK FROZEN">
+                      INDIVIDUALLY QUICK FROZEN
+                    </option>
+                    <option value="BLOCK FROZEN">
+                      BLOCK FROZEN
+                    </option>
+                    <option value="CHILLED">
+                      CHILLED
+                    </option>
+
+                  </select>
+
+                  @if (!isViewMode) {
+                    <button
+                      type="button"
+                      class="add-new-button"
+                      (click)="addNew('Freezing Technology')"
+                    >
+                      Add New
+                    </button>
+                  }
+
+                </div>
+
+              </div>
+
+
+              <!-- Preparation -->
+
+              <div class="form-field-wrapper">
+
+                <label class="field-label">
+                  Preparation
+                  <span class="required-star">*</span>
+                </label>
+
+                <div class="select-row">
+
+                  <select formControlName="preparation">
+
+                    <option value="">--Select--</option>
+                    <option value="CHILLED SHRIMPS">
+                      CHILLED SHRIMPS
+                    </option>
+                    <option value="MARINATED">
+                      MARINATED
+                    </option>
+
+                  </select>
+
+                  @if (!isViewMode) {
+                    <button
+                      type="button"
+                      class="add-new-button"
+                      (click)="addNew('Preparation')"
+                    >
+                      Add New
+                    </button>
+                  }
+
+                </div>
+
+              </div>
+
+
+              <!-- Sub Product Form -->
+
+              <div class="form-field-wrapper">
+
+                <label class="field-label">
+                  Sub Product Form
+                </label>
+
+                <div class="select-row">
+
+                  <select formControlName="subProductForm">
+
+                    <option value="">--Select--</option>
+                    <option value="REG">REGULAR</option>
+                    <option value="BRE">BREADED</option>
+                    <option value="MR">MARINATED</option>
+
+                  </select>
+
+                  @if (!isViewMode) {
+                    <button
+                      type="button"
+                      class="add-new-button"
+                      (click)="addNew('Sub Product Form')"
+                    >
+                      Add New
+                    </button>
+                  }
+
+                </div>
+
+              </div>
+
+
+              <!-- Coat -->
+
+              <div class="form-field-wrapper">
+
+                <label class="field-label">
+                  Coat %
+                </label>
+
+                <input
+                  type="number"
+                  formControlName="coat"
+                  placeholder="Enter coat %"
+                />
+
+              </div>
+
+
+              <!-- Sauce Weight -->
+
+              <div class="form-field-wrapper">
+
+                <label class="field-label">
+                  Sauce Weight
+                </label>
+
+                <input
+                  type="text"
+                  formControlName="sauceWeight"
+                  placeholder="Enter sauce weight"
+                />
+
+              </div>
+
+
+              <!-- Shrimp Shape -->
+
+              <div class="form-field-wrapper">
+
+                <label class="field-label">
+                  Shrimp Shape
+                </label>
+
+                <input
+                  type="text"
+                  formControlName="shrimpShape"
+                  placeholder="Enter shrimp shape"
+                />
+
+              </div>
+
+            </div>
+
+
+            <!-- =============================================
+                 RIGHT COLUMN
+                 ============================================= -->
+
+            <div class="form-column">
+
+              <!-- Product Description -->
+
+              <div class="form-field-wrapper">
+
+                <label class="field-label">
+                  Product Description
+                  <span class="required-star">*</span>
+                </label>
+
+                <input
+                  type="text"
+                  formControlName="productDescription"
+                  placeholder="Enter product description"
+                />
+
+              </div>
+
+
+              <!-- Glaze Status -->
+
+              <div class="form-field-wrapper">
+
+                <label class="field-label">
+                  Glaze Status
+                </label>
+
+                <select formControlName="glazeStatus">
+
+                  <option value="">--Select--</option>
+                  <option value="Yes">Yes</option>
+                  <option value="No">No</option>
+
+                </select>
+
+              </div>
+
+
+              <!-- Glaze % -->
+
+              <div class="form-field-wrapper">
+
+                <label class="field-label">
+                  Glaze %
+                </label>
+
+                <input
+                  type="number"
+                  formControlName="glazePercent"
+                  placeholder="Enter glaze %"
+                />
+
+              </div>
+
+
+              <!-- Glaze Type -->
+
+              <div class="form-field-wrapper">
+
+                <label class="field-label">
+                  Glaze Type
+                </label>
+
+                <select formControlName="glazeType">
+
+                  <option value="">--Select--</option>
+                  <option value="NWNC">NWNC</option>
+                  <option value="WWNC">WWNC</option>
+
+                </select>
+
+              </div>
+
+
+              <!-- Treatment -->
+
+              <div class="form-field-wrapper">
+
+                <label class="field-label">
+                  Treatment
+                </label>
+
+                <select formControlName="treatment">
+
+                  <option value="">--Select--</option>
+                  <option value="Yes">Yes</option>
+                  <option value="No">No</option>
+
+                </select>
+
+              </div>
+
+
+              <!-- Trade Name -->
+
+              <div class="form-field-wrapper">
+
+                <label class="field-label">
+                  Trade Name
+                </label>
+
+                <input
+                  type="text"
+                  formControlName="tradeName"
+                  placeholder="Enter trade name"
+                />
+
+              </div>
+
+
+              <!-- Shrimp % -->
+
+              <div class="form-field-wrapper">
+
+                <label class="field-label">
+                  Shrimp %
+                </label>
+
+                <input
+                  type="number"
+                  formControlName="shrimpPercent"
+                  placeholder="Enter shrimp %"
+                />
+
+              </div>
+
+
+              <!-- Shrimp Weight -->
+
+              <div class="form-field-wrapper">
+
+                <label class="field-label">
+                  Shrimp Weight
+                </label>
+
+                <input
+                  type="text"
+                  formControlName="shrimpWeight"
+                  placeholder="Enter shrimp weight"
+                />
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- =================================================
+               HEAD / ON-FIN + YIELD
+               ================================================= -->
+
+          <div class="yield-section">
+
+            <div class="yield-values">
+
+              <label class="yield-label">
+                HEAD/ON-Fin values:
+              </label>
+
+              <input
+                type="number"
+                [value]="yieldFrom"
+                [disabled]="isViewMode"
+                (input)="updateYieldFrom($event)"
+              />
+
+              <input
+                type="number"
+                [value]="yieldTo"
+                [disabled]="isViewMode"
+                (input)="updateYieldTo($event)"
+              />
+
+            </div>
+
+
+            <div class="yield-title">
+
+              <span>Yield</span>
+
+              <strong>
+                {{ yieldFrom }}% — {{ yieldTo }}%
+              </strong>
+
+            </div>
+
+
+            <div class="range-wrapper">
+
+              <div class="range-track"></div>
+
+              <div
+                class="range-selected"
+                [style.left.%]="yieldFrom"
+                [style.width.%]="yieldTo - yieldFrom"
+              ></div>
+
+              <input
+                class="range-input"
+                type="range"
+                min="0"
+                max="100"
+                [value]="yieldFrom"
+                [disabled]="isViewMode"
+                (input)="updateYieldFrom($event)"
+              />
+
+              <input
+                class="range-input"
+                type="range"
+                min="0"
+                max="100"
+                [value]="yieldTo"
+                [disabled]="isViewMode"
+                (input)="updateYieldTo($event)"
+              />
+
+            </div>
+
+
+            <div class="range-labels">
+
+              <span>0%</span>
+              <span>25%</span>
+              <span>50%</span>
+              <span>75%</span>
+              <span>100%</span>
+
+            </div>
+
+          </div>
+
+
+          <!-- =================================================
+               FOOTER
+               ================================================= -->
+
+          <div class="dialog-footer">
+
+            @if (isViewMode) {
+
+              <button
+                type="button"
+                class="cancel-button"
+                (click)="closeForm()"
+              >
+                Close
+              </button>
+
+              <button
+                type="button"
+                class="save-button"
+                (click)="editProduct()"
+              >
+                <mat-icon>edit</mat-icon>
+                <span>Edit</span>
+              </button>
+
+            } @else {
+
+              <button
+                type="button"
+                class="cancel-button"
+                (click)="closeForm()"
+              >
+                Cancel
+              </button>
+
+              <button
+                type="submit"
+                class="save-button"
+              >
+                <mat-icon>
+                  @if (isEditMode) {
+                    save
+                  } @else {
+                    check
+                  }
+                </mat-icon>
+
+                <span>
+                  @if (isEditMode) {
+                    Update
+                  } @else {
+                    Add
+                  }
+                </span>
+
+              </button>
+
+            }
+
+          </div>
+
+        </form>
+
+      </div>
+
+    </div>
+
+  }
+
+</div>

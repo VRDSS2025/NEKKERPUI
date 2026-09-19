@@ -1,0 +1,26 @@
+<p>product-preparation works!</p>
+<div class="product-preparation-page">
+
+  <button
+    type="button"
+    class="back-button"
+    (click)="goBack()">
+
+    <mat-icon>arrow_back</mat-icon>
+
+    <span>Back to Products</span>
+
+  </button>
+
+  <app-master-list
+    title="Product Preparation"
+    description="Manage product preparation information."
+    icon="inventory_2"
+    searchPlaceholder="Search product preparations..."
+    [columns]="columns"
+    [data]="productPreparations"
+    (addClicked)="addProductPreparation()"
+    (viewClicked)="viewProductPreparation($event)">
+  </app-master-list>
+
+</div>

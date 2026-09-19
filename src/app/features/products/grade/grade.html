@@ -1,0 +1,23 @@
+<div class="grade-page">
+
+  <button
+    type="button"
+    class="back-button"
+    (click)="goBack()"
+  >
+    <mat-icon>arrow_back</mat-icon>
+    <span>Back to Products</span>
+  </button>
+
+  <app-master-list
+    title="Grades"
+    description="Manage product grade information."
+    icon="grading"
+    searchPlaceholder="Search grades..."
+    [columns]="columns"
+    [data]="grades"
+    (addClicked)="addGrade()"
+    (viewClicked)="viewGrade($event)"
+  ></app-master-list>
+
+</div>
