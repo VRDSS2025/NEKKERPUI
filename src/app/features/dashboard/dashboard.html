@@ -1,0 +1,588 @@
+<div class="dashboard-page">
+
+  <!-- Background decoration -->
+  <div class="bg-orb orb-one"></div>
+  <div class="bg-orb orb-two"></div>
+  <div class="bg-orb orb-three"></div>
+
+  <div class="dashboard-container">
+
+    <!-- HEADER -->
+    <div class="dashboard-header">
+
+      <div class="header-left">
+        <div class="dashboard-icon">
+          <mat-icon>dashboard</mat-icon>
+        </div>
+
+        <div>
+          <h1>Business Dashboard</h1>
+          <p>Sales, turnover and business performance overview</p>
+        </div>
+      </div>
+
+      <div class="header-right">
+
+        <div class="date-box">
+          <mat-icon>calendar_month</mat-icon>
+          <span>01 Apr 2026 - 25 Sep 2026</span>
+        </div>
+
+        <button class="refresh-btn">
+          <mat-icon>refresh</mat-icon>
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- KPI CARDS -->
+    <div class="kpi-grid">
+
+      <div
+        class="kpi-card"
+        *ngFor="let card of kpiCards"
+        [ngClass]="card.className">
+
+        <div class="kpi-top">
+
+          <div class="kpi-icon">
+            <mat-icon>{{ card.icon }}</mat-icon>
+          </div>
+
+          <div
+            class="trend"
+            [ngClass]="card.trendType">
+
+            <mat-icon>
+              {{
+                card.trendType === 'up'
+                  ? 'trending_up'
+                  : card.trendType === 'down'
+                    ? 'trending_down'
+                    : 'remove'
+              }}
+            </mat-icon>
+
+            {{ card.trend }}
+
+          </div>
+
+        </div>
+
+        <div class="kpi-title">
+          {{ card.title }}
+        </div>
+
+        <div class="kpi-value">
+          {{ card.value }}
+        </div>
+
+        <div class="kpi-subtitle">
+          {{ card.subtitle }}
+        </div>
+
+        <div class="kpi-glow"></div>
+
+      </div>
+
+    </div>
+
+
+    <!-- TABS -->
+    <div class="dashboard-tabs">
+
+      <button
+        *ngFor="let tab of tabs"
+        [class.active]="selectedTab === tab.id"
+        (click)="setTab(tab.id)">
+
+        <mat-icon>{{ tab.icon }}</mat-icon>
+
+        <span>{{ tab.label }}</span>
+
+      </button>
+
+    </div>
+
+
+    <!-- MAIN GRID -->
+    <div class="main-grid">
+
+
+      <!-- SALES CHART -->
+      <div class="glass-card sales-card">
+
+        <div class="card-header">
+
+          <div>
+            <h2>Sales Performance</h2>
+            <p>Previous year vs current year</p>
+          </div>
+
+          <div class="legend">
+
+            <span>
+              <i class="previous"></i>
+              Previous Year
+            </span>
+
+            <span>
+              <i class="current"></i>
+              Current Year
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <div class="sales-chart">
+
+          <div class="y-axis">
+            <span>100</span>
+            <span>80</span>
+            <span>60</span>
+            <span>40</span>
+            <span>20</span>
+            <span>0</span>
+          </div>
+
+          <div class="chart-area">
+
+            <div class="grid-line line-1"></div>
+            <div class="grid-line line-2"></div>
+            <div class="grid-line line-3"></div>
+            <div class="grid-line line-4"></div>
+            <div class="grid-line line-5"></div>
+
+            <div class="bars">
+
+              <div
+                class="bar-group"
+                *ngFor="let item of salesData">
+
+                <div class="bar-wrapper">
+
+                  <div
+                    class="bar previous-bar"
+                    [style.height.%]="item.previous">
+                  </div>
+
+                  <div
+                    class="bar current-bar"
+                    [style.height.%]="item.current">
+                  </div>
+
+                </div>
+
+                <span>{{ item.month }}</span>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- TURNOVER -->
+      <div class="glass-card turnover-card">
+
+        <div class="card-header">
+
+          <div>
+            <h2>Turnover Comparison</h2>
+            <p>2025-2026 vs 2026-2027</p>
+          </div>
+
+          <button class="more-btn">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+
+        </div>
+
+
+        <div class="turnover-list">
+
+          <div
+            class="turnover-item"
+            *ngFor="let item of turnoverData">
+
+            <div class="turnover-icon">
+              <mat-icon>{{ item.icon }}</mat-icon>
+            </div>
+
+            <div class="turnover-info">
+
+              <div class="turnover-name">
+                {{ item.label }}
+              </div>
+
+              <div class="turnover-values">
+
+                <span>
+                  {{ item.previous }}
+                  <small>2025-26</small>
+                </span>
+
+                <mat-icon>arrow_forward</mat-icon>
+
+                <strong>
+                  {{ item.current }}
+                  <small>2026-27</small>
+                </strong>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- SECOND ROW -->
+    <div class="three-column-grid">
+
+
+      <!-- TOP CUSTOMERS -->
+      <div class="glass-card">
+
+        <div class="card-header">
+
+          <div>
+            <h2>Top Customers</h2>
+            <p>Highest order volume</p>
+          </div>
+
+          <button class="view-btn">
+            View All
+          </button>
+
+        </div>
+
+
+        <div class="customer-list">
+
+          <div
+            class="customer-item"
+            *ngFor="let customer of customers">
+
+            <div class="customer-avatar">
+              {{ customer.name.charAt(0) }}
+            </div>
+
+            <div class="customer-details">
+
+              <div class="customer-name">
+                {{ customer.name }}
+              </div>
+
+              <div class="customer-progress">
+
+                <div class="progress-track">
+                  <div
+                    class="progress-fill"
+                    [style.width.%]="customer.percentage">
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+
+            <div class="customer-value">
+
+              <strong>{{ customer.orders }}</strong>
+              <span>POs</span>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- RECEIVABLES -->
+      <div class="glass-card receivables-card">
+
+        <div class="card-header">
+
+          <div>
+            <h2>Receivables</h2>
+            <p>Current outstanding amount</p>
+          </div>
+
+          <div class="receivable-icon">
+            <mat-icon>account_balance_wallet</mat-icon>
+          </div>
+
+        </div>
+
+
+        <div class="receivable-main">
+
+          <span>Total Receivables</span>
+
+          <strong>
+            {{ receivables.total }}
+          </strong>
+
+        </div>
+
+
+        <div class="receivable-grid">
+
+          <div>
+            <span>FDA Cleared</span>
+            <strong>{{ receivables.fdaCleared }}</strong>
+          </div>
+
+          <div>
+            <span>Due Amount</span>
+            <strong>{{ receivables.dueAmount }}</strong>
+          </div>
+
+        </div>
+
+
+        <div class="receivable-progress">
+
+          <div class="progress-label">
+            <span>Collection Progress</span>
+            <strong>49%</strong>
+          </div>
+
+          <div class="progress-track">
+            <div
+              class="progress-fill"
+              style="width:49%">
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- PRODUCTS -->
+      <div class="glass-card">
+
+        <div class="card-header">
+
+          <div>
+            <h2>Product Distribution</h2>
+            <p>Current product categories</p>
+          </div>
+
+          <mat-icon class="header-icon">
+            inventory_2
+          </mat-icon>
+
+        </div>
+
+
+        <div class="product-list">
+
+          <div
+            class="product-item"
+            *ngFor="let product of products">
+
+            <div class="product-name">
+
+              <span class="product-dot"></span>
+
+              {{ product.name }}
+
+            </div>
+
+            <strong>
+              {{ product.quantity }}%
+            </strong>
+
+            <div class="product-progress">
+
+              <div
+                class="progress-fill"
+                [style.width.%]="product.percentage">
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- THIRD ROW -->
+    <div class="bottom-grid">
+
+
+      <!-- DELAYED SHIPMENTS -->
+      <div class="glass-card shipment-card">
+
+        <div class="card-header">
+
+          <div>
+            <h2>Delayed Shipments</h2>
+            <p>Customers requiring attention</p>
+          </div>
+
+          <div class="warning-badge">
+            <mat-icon>warning</mat-icon>
+            10 Customers
+          </div>
+
+        </div>
+
+
+        <div class="table-wrapper">
+
+          <table>
+
+            <thead>
+
+              <tr>
+                <th>Customer</th>
+                <th>POs</th>
+                <th>Status</th>
+                <th>Days</th>
+              </tr>
+
+            </thead>
+
+            <tbody>
+
+              <tr
+                *ngFor="let shipment of shipments">
+
+                <td>
+
+                  <div class="table-customer">
+
+                    <div class="mini-avatar">
+                      {{ shipment.customer.charAt(0) }}
+                    </div>
+
+                    {{ shipment.customer }}
+
+                  </div>
+
+                </td>
+
+                <td>
+                  {{ shipment.poCount }}
+                </td>
+
+                <td>
+
+                  <span
+                    class="status"
+                    [class.pending]="shipment.status === 'Pending'">
+
+                    {{ shipment.status }}
+
+                  </span>
+
+                </td>
+
+                <td>
+
+                  <span class="days">
+                    {{ shipment.days }} days
+                  </span>
+
+                </td>
+
+              </tr>
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+
+
+      <!-- COUNTRIES -->
+      <div class="glass-card country-card">
+
+        <div class="card-header">
+
+          <div>
+            <h2>Top Countries</h2>
+            <p>Orders by destination</p>
+          </div>
+
+          <mat-icon class="header-icon">
+            public
+          </mat-icon>
+
+        </div>
+
+
+        <div class="country-list">
+
+          <div
+            class="country-item"
+            *ngFor="let country of countries">
+
+            <div class="country-left">
+
+              <span class="country-flag">
+                {{ country.flag }}
+              </span>
+
+              <span>
+                {{ country.name }}
+              </span>
+
+            </div>
+
+            <strong>
+              {{ country.orders }}
+            </strong>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- FOOTER SUMMARY -->
+    <div class="dashboard-footer">
+
+      <div>
+        <mat-icon>schedule</mat-icon>
+        Last updated: Today, 10:30 AM
+      </div>
+
+      <div>
+        <mat-icon>verified</mat-icon>
+        Dashboard data is currently static
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

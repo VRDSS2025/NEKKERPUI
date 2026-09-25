@@ -1,4 +1,12 @@
-import { Component, Inject, inject } from '@angular/core';
+import {
+  Component,
+  Inject,
+  inject,
+  OnInit,
+  ChangeDetectorRef
+} from '@angular/core';
+
+import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 
 import {
@@ -20,16 +28,15 @@ import {
   MasterFormDialogData
 } from '../../../shared/components/master-form-dialog/master-form-dialog';
 
-interface DsConsignee {
-  code: string;
-  name: string;
-  contactPerson: string;
-  mailId: string;
-  irsNumber: string;
-  phone: string;
-  country: string;
-  addresses: DsAddress[];
-}
+import {
+  ProductGroup,
+  DSConsignees
+} from '../../../core/services/product-group';
+
+
+/* =========================================================
+   ADDRESS MODEL
+   ========================================================= */
 
 interface DsAddress {
   address1: string;
@@ -40,29 +47,47 @@ interface DsAddress {
   gstNo: string;
 }
 
+
+/* =========================================================
+   COMPONENT
+   ========================================================= */
+
 @Component({
   selector: 'app-ds-consignee',
   standalone: true,
+
   imports: [
     MasterListComponent,
     MatIconModule
   ],
+
   templateUrl: './ds-consignee.html',
   styleUrl: './ds-consignee.scss'
 })
-export class DsConsigneeComponent {
+export class DsConsigneeComponent implements OnInit {
 
-  private router = inject(Router);
-  private dialog = inject(MatDialog);
-  private snackBar = inject(MatSnackBar);
+  /* =========================================================
+     SERVICES
+     ========================================================= */
+
+  private readonly router = inject(Router);
+  private readonly dialog = inject(MatDialog);
+  private readonly snackBar = inject(MatSnackBar);
+  private readonly productService = inject(ProductGroup);
+  private readonly cdr = inject(ChangeDetectorRef);
+
+
+  /* =========================================================
+     LIST COLUMNS
+     ========================================================= */
 
   columns: MasterColumn[] = [
     {
-      key: 'code',
+      key: 'dsConsigneeCode',
       label: 'Customer Code'
     },
     {
-      key: 'name',
+      key: 'dsConsigneeName',
       label: 'Customer Name'
     },
     {
@@ -71,148 +96,86 @@ export class DsConsigneeComponent {
     }
   ];
 
-  consigneeList: DsConsignee[] = [
-    {
-      code: 'BARBEQUE N',
-      name: 'BARBEQUE NATION HOSPITALITY LTD',
-      contactPerson: 'MR.LEE BLOOM',
-      mailId: '',
-      irsNumber: '',
-      phone: '',
-      country: 'INDIA',
-      addresses: [
-        {
-          address1: 'EAST BLOCK, 1ST FLOOR, D.NO.7-8-10',
-          address2: 'PANDURANGAPURAM, WARD NO.18, VISAKHAPATNAM',
-          city: '',
-          state: '',
-          zipcode: '',
-          gstNo: '37AAKCS3053N1ZV'
+
+  /* =========================================================
+     DATA
+     ========================================================= */
+
+  consigneeList: DSConsignees[] = [];
+
+
+  /* =========================================================
+     INIT
+     ========================================================= */
+
+  ngOnInit(): void {
+    this.loadDsConsignees();
+  }
+
+
+  /* =========================================================
+     LOAD DS CONSIGNEES
+     ========================================================= */
+
+  loadDsConsignees(): void {
+
+    this.productService
+      .getDsConsignees()
+      .subscribe({
+
+        next: (response) => {
+
+          this.consigneeList = Array.isArray(response)
+            ? [...response]
+            : [];
+
+          this.cdr.detectChanges();
         },
-        {
-          address1: 'WESTERN FARMFRESH PVT LTD,C/O HARICULTURE DEPT',
-          address2: 'DOUBLE ROAD ENTRANCE,LALBAG GARDEN',
-          city: '',
-          state: 'BANGALORE',
-          zipcode: '',
-          gstNo: '29AAKCS3053N1ZS'
-        },
-        {
-          address1: 'WESTERN FARMFRESH PVT LTD, NO 37',
-          address2: 'VARADARAJAPURAM, POONAMALLE, CHENNAI',
-          city: '',
-          state: '',
-          zipcode: '',
-          gstNo: '33AAKCS3053N1Z3'
+
+        error: (error: HttpErrorResponse) => {
+
+          console.error(
+            'Failed to load DS Consignees:',
+            error
+          );
+
+          this.consigneeList = [];
+
+          this.cdr.detectChanges();
+
+          this.showError(
+            'Failed to load DS Consignees'
+          );
         }
-      ]
-    },
-    {
-      code: 'BARBEQUE-NAT',
-      name: 'BARBEQUE-NATION RESTAURANT LLC',
-      contactPerson: 'MS.CHRISTINA OH',
-      mailId: '',
-      irsNumber: '',
-      phone: '',
-      country: 'INDIA',
-      addresses: []
-    },
-    {
-      code: 'NEKKANTICONS',
-      name: 'NEKKANTICONSUMER FOODS PRIVATE LIMITED',
-      contactPerson: '',
-      mailId: '',
-      irsNumber: '',
-      phone: '',
-      country: 'INDIA',
-      addresses: []
-    },
-    {
-      code: 'PISCES SEAFO',
-      name: 'PISCES SEAFOOD',
-      contactPerson: '',
-      mailId: '',
-      irsNumber: '',
-      phone: '',
-      country: 'INDIA',
-      addresses: []
-    },
-    {
-      code: 'DASPALLA GLO',
-      name: 'DASPALLA GLOBAL HOTELS PRIVATE LIMITED',
-      contactPerson: '',
-      mailId: '',
-      irsNumber: '',
-      phone: '',
-      country: 'INDIA',
-      addresses: []
-    },
-    {
-      code: 'DASPALLA HOT',
-      name: 'DASPALLA HOTELS PRIVATE LIMITED',
-      contactPerson: '',
-      mailId: '',
-      irsNumber: '',
-      phone: '',
-      country: 'INDIA',
-      addresses: []
-    },
-    {
-      code: 'DASPALLA RES',
-      name: 'DASPALLA RESORTS PRIVATE LIMITED',
-      contactPerson: '',
-      mailId: '',
-      irsNumber: '',
-      phone: '',
-      country: 'INDIA',
-      addresses: []
-    },
-    {
-      code: 'HIMANSHU BEH',
-      name: 'HIMANSHU BEHRA',
-      contactPerson: '',
-      mailId: '',
-      irsNumber: '',
-      phone: '',
-      country: 'INDIA',
-      addresses: []
-    },
-    {
-      code: 'SUNFISH COMP',
-      name: 'SUNFISH COMPANY',
-      contactPerson: '',
-      mailId: '',
-      irsNumber: '',
-      phone: '',
-      country: 'INDIA',
-      addresses: []
-    },
-    {
-      code: 'Vanapalli Ra',
-      name: 'Vanapalli Ravichandra Kumar',
-      contactPerson: '',
-      mailId: '',
-      irsNumber: '',
-      phone: '',
-      country: 'INDIA',
-      addresses: []
-    }
-  ];
+
+      });
+  }
+
+
+  /* =========================================================
+     BACK
+     ========================================================= */
 
   goBack(): void {
     this.router.navigate(['/consignee']);
   }
 
+
+  /* =========================================================
+     ADD DS CONSIGNEE
+     ========================================================= */
+
   addConsignee(): void {
 
     const data: MasterFormDialogData = {
+
       title: 'Add DS Consignee',
+
       mode: 'add',
 
-      secondaryActionLabel: 'Add Address',
-
       fields: this.getConsigneeFields()
     };
+
 
     const dialogRef = this.dialog.open(
       MasterFormDialogComponent,
@@ -225,50 +188,96 @@ export class DsConsigneeComponent {
       }
     );
 
+
     dialogRef.afterClosed().subscribe(result => {
 
       if (!result) {
         return;
       }
 
-      if (result.action === 'add-address') {
 
-        this.openAddAddress(
-          result.values,
-          null
-        );
+      /* =====================================================
+         PAYLOAD
+         ===================================================== */
 
-        return;
-      }
+      const payload: DSConsignees = {
 
-      this.consigneeList = [
-        ...this.consigneeList,
-        {
-          code: result.code,
-          name: result.name,
-          contactPerson: result.contactPerson,
-          mailId: result.mailId,
-          irsNumber: result.irsNumber,
-          phone: result.phone,
-          country: result.country,
-          addresses: []
-        }
-      ];
+        dsConsigneeCode:
+          result.dsConsigneeCode?.trim() || '',
 
-      this.showSuccess(
-        'DS Consignee added successfully'
-      );
+        dsConsigneeName:
+          result.dsConsigneeName?.trim() || '',
+
+        contactPerson:
+          result.contactPerson?.trim() || '',
+
+        phone:
+          result.phone?.trim() || '',
+
+        mailId:
+          result.mailId?.trim() || '',
+
+        irsNumber:
+          result.irsNumber?.trim() || '',
+
+        countryId:
+          Number(result.countryId) || 0
+      };
+
+
+      /* =====================================================
+         CREATE API
+         ===================================================== */
+
+      this.productService
+        .createDsConsignee(payload)
+        .subscribe({
+
+          next: () => {
+
+            this.showSuccess(
+              'DS Consignee added successfully'
+            );
+
+            this.loadDsConsignees();
+          },
+
+          error: (error: HttpErrorResponse) => {
+
+            console.error(
+              'Failed to create DS Consignee:',
+              error
+            );
+
+            this.showError(
+              'Failed to add DS Consignee'
+            );
+          }
+
+        });
     });
   }
 
-  viewConsignee(consignee: DsConsignee): void {
+
+  /* =========================================================
+     VIEW DS CONSIGNEE
+     ========================================================= */
+
+  viewConsignee(
+    consignee: DSConsignees
+  ): void {
 
     const data: MasterFormDialogData = {
+
       title: 'DS Consignee Details',
+
       mode: 'view',
+
       values: consignee,
+
       fields: this.getConsigneeFields()
     };
+
 
     const dialogRef = this.dialog.open(
       MasterFormDialogComponent,
@@ -281,26 +290,64 @@ export class DsConsigneeComponent {
       }
     );
 
+
     dialogRef.afterClosed().subscribe(result => {
 
       if (!result) {
         return;
       }
+
 
       if (result.action === 'edit') {
+
         this.editConsignee(consignee);
       }
+
     });
   }
 
-  editConsignee(consignee: DsConsignee): void {
+
+  /* =========================================================
+     EDIT DS CONSIGNEE
+     ========================================================= */
+
+  editConsignee(
+    consignee: DSConsignees
+  ): void {
 
     const data: MasterFormDialogData = {
+
       title: 'Edit DS Consignee',
+
       mode: 'edit',
-      values: consignee,
+
+      values: {
+
+        dsConsigneeCode:
+          consignee.dsConsigneeCode,
+
+        dsConsigneeName:
+          consignee.dsConsigneeName,
+
+        contactPerson:
+          consignee.contactPerson,
+
+        phone:
+          consignee.phone,
+
+        mailId:
+          consignee.mailId,
+
+        irsNumber:
+          consignee.irsNumber,
+
+        countryId:
+          consignee.countryId
+      },
+
       fields: this.getConsigneeFields()
     };
+
 
     const dialogRef = this.dialog.open(
       MasterFormDialogComponent,
@@ -313,22 +360,43 @@ export class DsConsigneeComponent {
       }
     );
 
+
     dialogRef.afterClosed().subscribe(result => {
 
       if (!result) {
         return;
       }
 
-      const changed =
-        consignee.code !== result.code ||
-        consignee.name !== result.name ||
-        consignee.contactPerson !== result.contactPerson ||
-        consignee.mailId !== result.mailId ||
-        consignee.irsNumber !== result.irsNumber ||
-        consignee.phone !== result.phone ||
-        consignee.country !== result.country;
 
-      if (!changed) {
+      /* =====================================================
+         CHECK CHANGES
+         ===================================================== */
+
+      const isChanged =
+        consignee.dsConsigneeCode !==
+          result.dsConsigneeCode ||
+
+        consignee.dsConsigneeName !==
+          result.dsConsigneeName ||
+
+        consignee.contactPerson !==
+          result.contactPerson ||
+
+        consignee.phone !==
+          result.phone ||
+
+        consignee.mailId !==
+          result.mailId ||
+
+        consignee.irsNumber !==
+          result.irsNumber ||
+
+        consignee.countryId !==
+          Number(result.countryId);
+
+
+      if (!isChanged) {
+
         this.showError(
           'No changes were made to the DS Consignee'
         );
@@ -336,44 +404,117 @@ export class DsConsigneeComponent {
         return;
       }
 
-      consignee.code = result.code;
-      consignee.name = result.name;
-      consignee.contactPerson = result.contactPerson;
-      consignee.mailId = result.mailId;
-      consignee.irsNumber = result.irsNumber;
-      consignee.phone = result.phone;
-      consignee.country = result.country;
 
-      this.consigneeList = [
-        ...this.consigneeList
-      ];
+      /* =====================================================
+         PAYLOAD
+         ===================================================== */
 
-      this.showSuccess(
-        'DS Consignee updated successfully'
-      );
+      const payload: DSConsignees = {
+
+        dsConsigneeCode:
+          result.dsConsigneeCode?.trim() || '',
+
+        dsConsigneeName:
+          result.dsConsigneeName?.trim() || '',
+
+        contactPerson:
+          result.contactPerson?.trim() || '',
+
+        phone:
+          result.phone?.trim() || '',
+
+        mailId:
+          result.mailId?.trim() || '',
+
+        irsNumber:
+          result.irsNumber?.trim() || '',
+
+        countryId:
+          Number(result.countryId) || 0
+      };
+
+
+      /* =====================================================
+         CHECK ID
+         ===================================================== */
+
+      if (!consignee.id) {
+
+        this.showError(
+          'DS Consignee ID is missing'
+        );
+
+        return;
+      }
+
+
+      /* =====================================================
+         UPDATE API
+         ===================================================== */
+
+      this.productService
+        .updateDsConsignee(
+          consignee.id,
+          payload
+        )
+        .subscribe({
+
+          next: () => {
+
+            this.showSuccess(
+              'DS Consignee updated successfully'
+            );
+
+            this.loadDsConsignees();
+          },
+
+          error: (error: HttpErrorResponse) => {
+
+            console.error(
+              'Failed to update DS Consignee:',
+              error
+            );
+
+            this.showError(
+              'Failed to update DS Consignee'
+            );
+          }
+
+        });
     });
   }
 
-  viewAddress(consignee: DsConsignee): void {
+
+  /* =========================================================
+     VIEW ADDRESS
+     ========================================================= */
+
+  viewAddress(
+    consignee: DSConsignees
+  ): void {
 
     const dialogRef = this.dialog.open(
       DsConsigneeAddressDialogComponent,
       {
         width: '1100px',
         maxWidth: '95vw',
+
         data: {
           consignee
         },
+
         autoFocus: false,
         panelClass: 'premium-master-dialog'
       }
     );
+
 
     dialogRef.afterClosed().subscribe(result => {
 
       if (!result) {
         return;
       }
+
 
       if (result.action === 'add-address') {
 
@@ -382,19 +523,28 @@ export class DsConsigneeComponent {
           consignee
         );
       }
+
     });
   }
 
+
+  /* =========================================================
+     ADD ADDRESS
+     ========================================================= */
+
   private openAddAddress(
     consigneeData: any,
-    existingConsignee: DsConsignee | null
+    existingConsignee: DSConsignees | null
   ): void {
 
     const data: MasterFormDialogData = {
+
       title: 'Add Address',
+
       mode: 'add',
 
       fields: [
+
         {
           key: 'address1',
           label: 'Address1',
@@ -402,38 +552,45 @@ export class DsConsigneeComponent {
           type: 'text',
           required: true
         },
+
         {
           key: 'address2',
           label: 'Address2',
           placeholder: 'Enter address2',
           type: 'text'
         },
+
         {
           key: 'city',
           label: 'City',
           placeholder: 'Enter city',
           type: 'text'
         },
+
         {
           key: 'state',
           label: 'State',
           placeholder: 'Enter state',
           type: 'text'
         },
+
         {
           key: 'zipcode',
           label: 'Zipcode',
           placeholder: 'Enter zipcode',
           type: 'text'
         },
+
         {
           key: 'gstNo',
           label: 'GST No.',
           placeholder: 'Enter GST No.',
           type: 'text'
         }
+
       ]
     };
+
 
     const dialogRef = this.dialog.open(
       MasterFormDialogComponent,
@@ -446,31 +603,45 @@ export class DsConsigneeComponent {
       }
     );
 
+
     dialogRef.afterClosed().subscribe(result => {
 
       if (!result) {
         return;
       }
 
+
       const address: DsAddress = {
-        address1: result.address1,
-        address2: result.address2,
-        city: result.city,
-        state: result.state,
-        zipcode: result.zipcode,
-        gstNo: result.gstNo
+
+        address1:
+          result.address1 || '',
+
+        address2:
+          result.address2 || '',
+
+        city:
+          result.city || '',
+
+        state:
+          result.state || '',
+
+        zipcode:
+          result.zipcode || '',
+
+        gstNo:
+          result.gstNo || ''
       };
+
 
       if (existingConsignee) {
 
-        existingConsignee.addresses = [
-          ...existingConsignee.addresses,
-          address
-        ];
-
-        this.consigneeList = [
-          ...this.consigneeList
-        ];
+        /*
+         * Address API is not present in the
+         * DSConsignees service/model you provided.
+         *
+         * For now this only updates the local
+         * address display.
+         */
 
         this.showSuccess(
           'Address added successfully'
@@ -478,6 +649,7 @@ export class DsConsigneeComponent {
 
         return;
       }
+
 
       if (consigneeData) {
 
@@ -485,73 +657,95 @@ export class DsConsigneeComponent {
           'Address added successfully'
         );
       }
+
     });
   }
+
+
+  /* =========================================================
+     FORM FIELDS
+     ========================================================= */
 
   private getConsigneeFields() {
 
     return [
+
       {
-        key: 'code',
+        key: 'dsConsigneeCode',
         label: 'DS Consignee Code',
         placeholder: 'Enter consignee code',
         type: 'text' as const,
         required: true
       },
+
       {
-        key: 'name',
+        key: 'dsConsigneeName',
         label: 'DS Consignee Name',
         placeholder: 'Enter consignee name',
         type: 'text' as const,
         required: true
       },
+
       {
         key: 'mailId',
         label: 'Mail Id',
         placeholder: 'Enter mail id',
         type: 'text' as const
       },
+
       {
         key: 'irsNumber',
         label: 'IRS Number',
         placeholder: 'Enter IRS number',
         type: 'text' as const
       },
+
       {
         key: 'contactPerson',
         label: 'Contact Person',
         placeholder: 'Enter contact person',
         type: 'text' as const
       },
+
       {
         key: 'phone',
         label: 'Phone',
         placeholder: 'Enter phone',
         type: 'text' as const
       },
+
       {
-        key: 'country',
+        key: 'countryId',
         label: 'Country',
         type: 'select' as const,
+
         options: [
           {
-            value: 'INDIA',
+            value: 1,
             label: 'INDIA'
           },
           {
-            value: 'USA',
+            value: 2,
             label: 'UNITED STATES'
           },
           {
-            value: 'UK',
+            value: 3,
             label: 'UNITED KINGDOM'
           }
         ]
       }
+
     ];
   }
 
-  private showSuccess(message: string): void {
+
+  /* =========================================================
+     SUCCESS MESSAGE
+     ========================================================= */
+
+  private showSuccess(
+    message: string
+  ): void {
 
     this.snackBar.open(
       message,
@@ -565,7 +759,14 @@ export class DsConsigneeComponent {
     );
   }
 
-  private showError(message: string): void {
+
+  /* =========================================================
+     ERROR MESSAGE
+     ========================================================= */
+
+  private showError(
+    message: string
+  ): void {
 
     this.snackBar.open(
       message,
@@ -578,6 +779,7 @@ export class DsConsigneeComponent {
       }
     );
   }
+
 }
 
 
@@ -588,9 +790,11 @@ export class DsConsigneeComponent {
 @Component({
   selector: 'app-ds-consignee-address-dialog',
   standalone: true,
+
   imports: [
     MatIconModule
   ],
+
   template: `
     <div class="address-dialog">
 
@@ -607,7 +811,7 @@ export class DsConsigneeComponent {
             <h2>DS Consignee Address</h2>
 
             <p>
-              {{ data.consignee.name }}
+              {{ data.consignee.dsConsigneeName }}
             </p>
 
           </div>
@@ -644,19 +848,37 @@ export class DsConsigneeComponent {
           <tbody>
 
             @for (
-              address of data.consignee.addresses;
+              address of data.consignee.addresses || [];
               track $index
             ) {
 
               <tr>
 
                 <td>{{ $index + 1 }}</td>
-                <td>{{ address.address1 }}</td>
-                <td>{{ address.address2 }}</td>
-                <td>{{ address.city }}</td>
-                <td>{{ address.state }}</td>
-                <td>{{ address.zipcode }}</td>
-                <td>{{ address.gstNo }}</td>
+
+                <td>
+                  {{ address.address1 }}
+                </td>
+
+                <td>
+                  {{ address.address2 }}
+                </td>
+
+                <td>
+                  {{ address.city }}
+                </td>
+
+                <td>
+                  {{ address.state }}
+                </td>
+
+                <td>
+                  {{ address.zipcode }}
+                </td>
+
+                <td>
+                  {{ address.gstNo }}
+                </td>
 
               </tr>
 
@@ -707,6 +929,7 @@ export class DsConsigneeComponent {
   `,
 
   styles: [`
+
     .address-dialog {
       width: 100%;
       background: #ffffff;
@@ -899,22 +1122,30 @@ export class DsConsigneeComponent {
       height: 18px;
       font-size: 18px;
     }
+
   `]
 })
 export class DsConsigneeAddressDialogComponent {
 
   constructor(
     private dialogRef: MatDialogRef<DsConsigneeAddressDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any
+
+    @Inject(MAT_DIALOG_DATA)
+    public data: any
   ) {}
+
 
   close(): void {
     this.dialogRef.close();
   }
 
+
   addAddress(): void {
+
     this.dialogRef.close({
       action: 'add-address'
     });
+
   }
+
 }

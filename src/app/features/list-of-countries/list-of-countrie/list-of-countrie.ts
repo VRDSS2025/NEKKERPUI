@@ -1,5 +1,6 @@
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
+
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatIconModule } from '@angular/material/icon';
@@ -14,6 +15,12 @@ import {
   MasterFormDialogData
 } from '../../../shared/components/master-form-dialog/master-form-dialog';
 
+import {
+  ProductGroup,
+  Countries
+} from '../../../core/services/product-group';
+
+
 @Component({
   selector: 'app-list-of-countries',
   standalone: true,
@@ -24,11 +31,17 @@ import {
   templateUrl: './list-of-countrie.html',
   styleUrl: './list-of-countrie.scss'
 })
-export class ListOfCountriesComponent {
+export class ListOfCountriesComponent implements OnInit {
 
   private readonly router = inject(Router);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
+  private readonly productService = inject(ProductGroup);
+
+
+  // =====================================================
+  // TABLE COLUMNS
+  // =====================================================
 
   columns: MasterColumn[] = [
     {
@@ -45,60 +58,59 @@ export class ListOfCountriesComponent {
     }
   ];
 
-  countries = [
-    {
-      countryCode: 'BE',
-      name: 'BELGIUM',
-      group: 'EU'
-    },
-    {
-      countryCode: 'CA',
-      name: 'CANADA',
-      group: 'CANADA'
-    },
-    {
-      countryCode: 'CHINA',
-      name: 'CHINA',
-      group: 'OTHERS'
-    },
-    {
-      countryCode: 'COLOMBIA',
-      name: 'COLOMBIA',
-      group: 'OTHERS'
-    },
-    {
-      countryCode: 'CO',
-      name: 'COLOMBO',
-      group: 'OTHERS'
-    },
-    {
-      countryCode: 'DOMINICAN REPUBLIC',
-      name: 'DOMINICAN REPUBLIC',
-      group: 'OTHERS'
-    },
-    {
-      countryCode: 'EG',
-      name: 'EGYPT',
-      group: 'OTHERS'
-    },
-    {
-      countryCode: 'FIJI ISLANDS',
-      name: 'FIJI ISLANDS',
-      group: 'OTHERS'
-    },
-    {
-      countryCode: 'FR',
-      name: 'FRANCE',
-      group: 'EU'
-    },
-    {
-      countryCode: 'GER',
-      name: 'GERMANY',
-      group: 'EU'
-    }
-  ];
+
+  // =====================================================
+  // COUNTRY DATA
+  // =====================================================
+
+  countries: Countries[] = [];
+
+
+  // =====================================================
+  // INITIAL LOAD
+  // =====================================================
+
+  ngOnInit(): void {
+    this.loadCountries();
+  }
+
+
+  // =====================================================
+  // GET COUNTRIES
+  // =====================================================
+
+  private loadCountries(): void {
+
+    this.productService.getCountries().subscribe({
+
+      next: (response: Countries[]) => {
+
+        this.countries = response ?? [];
+
+      },
+
+      error: (error) => {
+
+        console.error('Failed to load countries:', error);
+
+        this.showMessage(
+          'Failed to load countries.',
+          'error'
+        );
+
+      }
+
+    });
+
+  }
+
+
+  // =====================================================
+  // ADD COUNTRY
+  // =====================================================
 
   addCountry(): void {
+
     const dialogRef = this.dialog.open(
       MasterFormDialogComponent,
       {
@@ -106,28 +118,75 @@ export class ListOfCountriesComponent {
         maxWidth: '95vw',
         autoFocus: false,
         panelClass: 'premium-master-dialog',
+
         data: this.getFormData('add')
       }
     );
 
+
     dialogRef.afterClosed().subscribe(result => {
+
       if (!result) {
         return;
       }
 
-      this.countries = [
-        ...this.countries,
-        result
-      ];
 
-      this.showMessage(
-        'Country added successfully.',
-        'success'
-      );
+      const payload: Countries = {
+
+        countryCode:
+          result.countryCode?.trim() || '',
+
+        name:
+          result.name?.trim() || '',
+
+        group:
+          result.group || ''
+
+      };
+
+
+      this.productService
+        .createCountries(payload)
+        .subscribe({
+
+          next: () => {
+
+            this.showMessage(
+              'Country added successfully.',
+              'success'
+            );
+
+            this.loadCountries();
+
+          },
+
+          error: (error) => {
+
+            console.error(
+              'Failed to create country:',
+              error
+            );
+
+            this.showMessage(
+              'Failed to add country.',
+              'error'
+            );
+
+          }
+
+        });
+
     });
+
   }
 
-  viewCountry(country: any): void {
+
+  // =====================================================
+  // VIEW COUNTRY
+  // =====================================================
+
+  viewCountry(country: Countries): void {
+
     const dialogRef = this.dialog.open(
       MasterFormDialogComponent,
       {
@@ -135,6 +194,7 @@ export class ListOfCountriesComponent {
         maxWidth: '95vw',
         autoFocus: false,
         panelClass: 'premium-master-dialog',
+
         data: this.getFormData(
           'view',
           country
@@ -142,17 +202,27 @@ export class ListOfCountriesComponent {
       }
     );
 
+
     dialogRef.afterClosed().subscribe(result => {
 
       if (!result || result.action !== 'edit') {
         return;
       }
 
+
       this.editCountry(country);
+
     });
+
   }
 
-  private editCountry(country: any): void {
+
+  // =====================================================
+  // EDIT COUNTRY
+  // =====================================================
+
+  private editCountry(country: Countries): void {
+
     const dialogRef = this.dialog.open(
       MasterFormDialogComponent,
       {
@@ -160,6 +230,7 @@ export class ListOfCountriesComponent {
         maxWidth: '95vw',
         autoFocus: false,
         panelClass: 'premium-master-dialog',
+
         data: this.getFormData(
           'edit',
           country
@@ -167,39 +238,94 @@ export class ListOfCountriesComponent {
       }
     );
 
+
     dialogRef.afterClosed().subscribe(result => {
-      if (!result || result.action === 'edit') {
+
+      if (!result) {
         return;
       }
 
-      const index = this.countries.indexOf(country);
 
-      if (index === -1) {
+      const countryId = country.id;
+
+      if (!countryId) {
+
+        this.showMessage(
+          'Country ID is missing.',
+          'error'
+        );
+
         return;
+
       }
 
-      this.countries[index] = {
-        ...this.countries[index],
-        ...result
+
+      const payload: Countries = {
+
+        id: countryId,
+
+        countryCode:
+          result.countryCode?.trim() || '',
+
+        name:
+          result.name?.trim() || '',
+
+        group:
+          result.group || ''
+
       };
 
-      this.countries = [
-        ...this.countries
-      ];
 
-      this.showMessage(
-        'Country updated successfully.',
-        'success'
-      );
+      this.productService
+        .updateCountriese(
+          countryId,
+          payload
+        )
+        .subscribe({
+
+          next: () => {
+
+            this.showMessage(
+              'Country updated successfully.',
+              'success'
+            );
+
+            this.loadCountries();
+
+          },
+
+          error: (error) => {
+
+            console.error(
+              'Failed to update country:',
+              error
+            );
+
+            this.showMessage(
+              'Failed to update country.',
+              'error'
+            );
+
+          }
+
+        });
+
     });
+
   }
+
+
+  // =====================================================
+  // FORM CONFIGURATION
+  // =====================================================
 
   private getFormData(
     mode: 'add' | 'edit' | 'view',
-    values?: any
+    values?: Countries
   ): MasterFormDialogData {
 
     return {
+
       title:
         mode === 'add'
           ? 'Add Country'
@@ -212,6 +338,7 @@ export class ListOfCountriesComponent {
       values,
 
       fields: [
+
         {
           key: 'countryCode',
           label: 'Country Code',
@@ -219,6 +346,7 @@ export class ListOfCountriesComponent {
           type: 'text',
           required: true
         },
+
         {
           key: 'name',
           label: 'Name',
@@ -226,11 +354,13 @@ export class ListOfCountriesComponent {
           type: 'text',
           required: true
         },
+
         {
           key: 'group',
           label: 'Group',
           type: 'select',
           required: true,
+
           options: [
             {
               value: 'EU',
@@ -245,10 +375,19 @@ export class ListOfCountriesComponent {
               label: 'OTHERS'
             }
           ]
+
         }
+
       ]
+
     };
+
   }
+
+
+  // =====================================================
+  // SNACKBAR
+  // =====================================================
 
   private showMessage(
     message: string,
@@ -260,14 +399,27 @@ export class ListOfCountriesComponent {
       'Close',
       {
         duration: 3000,
-        panelClass: [`${panelClass}-snackbar`],
+
+        panelClass: [
+          `${panelClass}-snackbar`
+        ],
+
         horizontalPosition: 'right',
         verticalPosition: 'top'
       }
     );
+
   }
 
+
+  // =====================================================
+  // BACK
+  // =====================================================
+
   goBack(): void {
+
     this.router.navigate(['/countries']);
+
   }
+
 }

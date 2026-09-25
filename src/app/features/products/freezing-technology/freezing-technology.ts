@@ -1,4 +1,11 @@
-import { Component, inject } from '@angular/core';
+import {
+  Component,
+  inject,
+  OnInit,
+  ChangeDetectorRef
+} from '@angular/core';
+
+import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -11,80 +18,152 @@ import {
 
 import {
   MasterFormDialogComponent,
-  MasterFormDialogData
+  MasterFormDialogData,
+  MasterFormField
 } from '../../../shared/components/master-form-dialog/master-form-dialog';
+
+import {
+  ProductGroup,
+  FreezingTechnologies
+} from '../../../core/services/product-group';
+
 
 @Component({
   selector: 'app-freezing-technology',
   standalone: true,
+
   imports: [
     MasterListComponent,
     MatIconModule
   ],
+
   templateUrl: './freezing-technology.html',
   styleUrl: './freezing-technology.scss'
 })
-export class FreezingTechnologyComponent {
+export class FreezingTechnologyComponent implements OnInit {
 
-  private router = inject(Router);
-  private dialog = inject(MatDialog);
-  private snackBar = inject(MatSnackBar);
+  /* =========================================================
+     SERVICES
+     ========================================================= */
+
+  private readonly router = inject(Router);
+  private readonly dialog = inject(MatDialog);
+  private readonly snackBar = inject(MatSnackBar);
+  private readonly productService = inject(ProductGroup);
+  private readonly cdr = inject(ChangeDetectorRef);
+
+
+  /* =========================================================
+     LIST COLUMNS
+     ========================================================= */
 
   columns: MasterColumn[] = [
-    { key: 'code', label: 'Freeze Code' },
-    { key: 'technology', label: 'Freeze Technology' },
-    { key: 'shortForm', label: 'Short Form' }
-  ];
-
-  freezingTechnologies = [
     {
-      code: '02',
-      technology: 'BLOCK FROZEN',
-      description: 'BLOCK FROZEN',
-      shortForm: 'BLOCKS'
+      key: 'freezeCode',
+      label: 'Freeze Code'
     },
     {
-      code: '01',
-      technology: 'INDIVIDUALLY QUICK FROZEN',
-      description: 'INDIVIDUALLY QUICK FROZEN',
-      shortForm: 'IQF'
+      key: 'freezeTechnology',
+      label: 'Freeze Technology'
     },
     {
-      code: '03',
-      technology: 'CHILLED',
-      description: 'CHILLED',
-      shortForm: 'CHILLED'
-    },
-    {
-      code: 'IQF TRAY PACK',
-      technology: 'IQF TRAY PACK',
-      description: 'IQF TRAY PACK',
-      shortForm: 'IQF TRAY PACK'
+      key: 'shortForm',
+      label: 'Short Form'
     }
   ];
+
+
+  /* =========================================================
+     DATA
+     ========================================================= */
+
+  products: FreezingTechnologies[] = [];
+
+
+  /* =========================================================
+     INIT
+     ========================================================= */
+
+  ngOnInit(): void {
+    this.loadProducts();
+  }
+
+
+  /* =========================================================
+     LOAD FREEZING TECHNOLOGIES
+     ========================================================= */
+
+  loadProducts(): void {
+
+    this.productService
+      .getFreezingTechnologies()
+      .subscribe({
+
+        next: (response) => {
+
+          this.products = Array.isArray(response)
+            ? [...response]
+            : [];
+
+          this.cdr.detectChanges();
+        },
+
+        error: (error: HttpErrorResponse) => {
+
+          console.error(
+            'Failed to load Freezing Technologies:',
+            error
+          );
+
+          this.products = [];
+
+          this.cdr.detectChanges();
+
+          this.showError(
+            'Failed to load Freezing Technologies'
+          );
+        }
+
+      });
+  }
+
+
+  /* =========================================================
+     BACK
+     ========================================================= */
 
   goBack(): void {
     this.router.navigate(['/products']);
   }
 
-  addFreezingTechnology(): void {
+
+  /* =========================================================
+     ADD FREEZING TECHNOLOGY
+     ========================================================= */
+
+  addProduct(): void {
 
     const dialogData: MasterFormDialogData = {
+
       title: 'Add Freezing Technology',
+
       mode: 'add',
+
       fields: this.getFields()
     };
 
+
     const dialogRef = this.dialog.open(
       MasterFormDialogComponent,
       {
-        width: '650px',
-        maxWidth: '95vw',
+        width: '700px',
+        maxWidth: '90vw',
         data: dialogData,
         autoFocus: false,
         panelClass: 'premium-master-dialog'
       }
     );
+
 
     dialogRef.afterClosed().subscribe(result => {
 
@@ -92,78 +171,153 @@ export class FreezingTechnologyComponent {
         return;
       }
 
-      this.freezingTechnologies = [
-        ...this.freezingTechnologies,
-        {
-          code: result.code,
-          technology: result.technology,
-          description: result.description,
-          shortForm: result.shortForm
-        }
-      ];
 
-      this.showSuccess(
-        'Freezing Technology added successfully'
-      );
+      /* =====================================================
+         CREATE PAYLOAD
+         ===================================================== */
+
+      const payload: FreezingTechnologies = {
+
+        freezeCode:
+          result.freezeCode?.trim() || '',
+
+        freezeTechnology:
+          result.freezeTechnology?.trim() || '',
+
+        description:
+          result.description?.trim() || '',
+
+        shortForm:
+          result.shortForm?.trim() || ''
+      };
+
+
+      /* =====================================================
+         CREATE API
+         ===================================================== */
+
+      this.productService
+        .createFreezingTechnologies(payload)
+        .subscribe({
+
+          next: () => {
+
+            this.showSuccess(
+              'Freezing Technology added successfully'
+            );
+
+            this.loadProducts();
+          },
+
+          error: (error: HttpErrorResponse) => {
+
+            console.error(
+              'Failed to create Freezing Technology:',
+              error
+            );
+
+            this.showError(
+              'Failed to add Freezing Technology'
+            );
+          }
+
+        });
     });
   }
 
-  viewFreezingTechnology(item: any): void {
+
+  /* =========================================================
+     VIEW FREEZING TECHNOLOGY
+     ========================================================= */
+
+  viewFreezing(
+    freezing: FreezingTechnologies
+  ): void {
 
     const dialogData: MasterFormDialogData = {
+
       title: 'Freezing Technology Details',
+
       mode: 'view',
-      values: item,
-      fields: this.getFields(false)
+
+      values: freezing,
+
+      fields: this.getFields()
     };
+
 
     const dialogRef = this.dialog.open(
       MasterFormDialogComponent,
       {
-        width: '650px',
-        maxWidth: '95vw',
+        width: '700px',
+        maxWidth: '90vw',
         data: dialogData,
         autoFocus: false,
         panelClass: 'premium-master-dialog'
       }
     );
 
+
     dialogRef.afterClosed().subscribe(result => {
 
       if (!result) {
         return;
       }
+
 
       if (result.action === 'edit') {
-        this.editFreezingTechnology(item);
+
+        this.editFreezing(freezing);
       }
+
     });
   }
 
-  editFreezingTechnology(item: any): void {
+
+  /* =========================================================
+     EDIT FREEZING TECHNOLOGY
+     ========================================================= */
+
+  editFreezing(
+    freezing: FreezingTechnologies
+  ): void {
 
     const dialogData: MasterFormDialogData = {
+
       title: 'Edit Freezing Technology',
+
       mode: 'edit',
+
       values: {
-        code: item.code,
-        technology: item.technology,
-        description: item.description,
-        shortForm: item.shortForm
+
+        freezeCode:
+          freezing.freezeCode,
+
+        freezeTechnology:
+          freezing.freezeTechnology,
+
+        description:
+          freezing.description,
+
+        shortForm:
+          freezing.shortForm
       },
+
       fields: this.getFields()
     };
+
 
     const dialogRef = this.dialog.open(
       MasterFormDialogComponent,
       {
-        width: '650px',
-        maxWidth: '95vw',
+        width: '700px',
+        maxWidth: '90vw',
         data: dialogData,
         autoFocus: false,
         panelClass: 'premium-master-dialog'
       }
     );
+
 
     dialogRef.afterClosed().subscribe(result => {
 
@@ -171,69 +325,153 @@ export class FreezingTechnologyComponent {
         return;
       }
 
+
+      /* =====================================================
+         CHECK CHANGES
+         ===================================================== */
+
       const isChanged =
-        item.code !== result.code ||
-        item.technology !== result.technology ||
-        item.description !== result.description ||
-        item.shortForm !== result.shortForm;
+        freezing.freezeCode !== result.freezeCode ||
+        freezing.freezeTechnology !== result.freezeTechnology ||
+        (freezing.description || '') !==
+          (result.description || '') ||
+        freezing.shortForm !== result.shortForm;
+
 
       if (!isChanged) {
+
         this.showError(
           'No changes were made to the Freezing Technology'
         );
+
         return;
       }
 
-      item.code = result.code;
-      item.technology = result.technology;
-      item.description = result.description;
-      item.shortForm = result.shortForm;
 
-      this.freezingTechnologies = [
-        ...this.freezingTechnologies
-      ];
+      /* =====================================================
+         UPDATE PAYLOAD
+         ===================================================== */
 
-      this.showSuccess(
-        'Freezing Technology updated successfully'
-      );
+      const payload: FreezingTechnologies = {
+
+        freezeCode:
+          result.freezeCode?.trim() || '',
+
+        freezeTechnology:
+          result.freezeTechnology?.trim() || '',
+
+        description:
+          result.description?.trim() || '',
+
+        shortForm:
+          result.shortForm?.trim() || ''
+      };
+
+
+      /* =====================================================
+         CHECK ID
+         ===================================================== */
+
+      if (!freezing.id) {
+
+        this.showError(
+          'Freezing Technology ID is missing'
+        );
+
+        return;
+      }
+
+
+      /* =====================================================
+         UPDATE API
+         ===================================================== */
+
+      this.productService
+        .updateFreezingTechnologies(
+          freezing.id,
+          payload
+        )
+        .subscribe({
+
+          next: () => {
+
+            this.showSuccess(
+              'Freezing Technology updated successfully'
+            );
+
+            this.loadProducts();
+          },
+
+          error: (error: HttpErrorResponse) => {
+
+            console.error(
+              'Failed to update Freezing Technology:',
+              error
+            );
+
+            this.showError(
+              'Failed to update Freezing Technology'
+            );
+          }
+
+        });
     });
   }
 
-  private getFields(required = true) {
+
+  /* =========================================================
+     FORM FIELDS
+     ========================================================= */
+
+  private getFields(
+    required = true
+  ): MasterFormField[] {
 
     return [
+
       {
-        key: 'code',
+        key: 'freezeCode',
         label: 'Freeze Code',
         placeholder: 'Enter freeze code',
-        type: 'text' as const,
+        type: 'text',
         required
       },
+
       {
-        key: 'technology',
+        key: 'freezeTechnology',
         label: 'Freeze Technology',
         placeholder: 'Enter freeze technology',
-        type: 'text' as const,
+        type: 'text',
         required
       },
+
       {
         key: 'description',
         label: 'Description',
         placeholder: 'Enter description',
-        type: 'textarea' as const,
+        type: 'textarea',
         required
       },
+
       {
         key: 'shortForm',
         label: 'Short Form',
         placeholder: 'Enter short form',
-        type: 'text' as const,
+        type: 'text',
         required
       }
+
     ];
   }
 
-  private showSuccess(message: string): void {
+
+  /* =========================================================
+     SUCCESS MESSAGE
+     ========================================================= */
+
+  private showSuccess(
+    message: string
+  ): void {
 
     this.snackBar.open(
       message,
@@ -247,7 +485,14 @@ export class FreezingTechnologyComponent {
     );
   }
 
-  private showError(message: string): void {
+
+  /* =========================================================
+     ERROR MESSAGE
+     ========================================================= */
+
+  private showError(
+    message: string
+  ): void {
 
     this.snackBar.open(
       message,
@@ -260,4 +505,5 @@ export class FreezingTechnologyComponent {
       }
     );
   }
+
 }

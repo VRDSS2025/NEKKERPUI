@@ -1,24 +1,17 @@
 <nav class="navbar">
 
-  <!-- =========================================
-       LEFT SECTION
-       ========================================= -->
-
+  <!-- LEFT -->
   <div class="navbar-left">
-
-    <!-- Menu Button -->
 
     <button
       type="button"
       class="menu-button"
       aria-label="Toggle navigation"
+      title="Menu"
       (click)="toggleMenu()"
     >
       <mat-icon>menu</mat-icon>
     </button>
-
-
-    <!-- Company Brand -->
 
     <div class="navbar-brand">
 
@@ -37,22 +30,33 @@
   </div>
 
 
-  <!-- =========================================
-       RIGHT SECTION
-       ========================================= -->
-
+  <!-- RIGHT -->
   <div class="navbar-right">
 
-    <!-- Profile Wrapper -->
+    <!-- HOME -->
+    <button
+      type="button"
+      class="home-navigation-button"
+      aria-label="Go to Home"
+      title="Home"
+      (click)="goToHome()"
+    >
+      <mat-icon>home</mat-icon>
 
+      <span>
+        Home
+      </span>
+    </button>
+
+
+    <!-- PROFILE -->
     <div class="profile-wrapper">
-
-      <!-- Profile Button -->
 
       <button
         type="button"
         class="profile-button"
         aria-label="User profile"
+        title="Profile"
         (click)="toggleProfileMenu()"
       >
 
@@ -70,10 +74,6 @@
 
       </button>
 
-
-      <!-- =========================================
-           PROFILE DROPDOWN
-           ========================================= -->
 
       @if (profileMenuOpen) {
 

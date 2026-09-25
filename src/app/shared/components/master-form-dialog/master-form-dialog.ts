@@ -32,7 +32,7 @@ export interface MasterFormField {
 
   placeholder?: string;
 
-  type?: 'text' | 'textarea' | 'select' | 'checkbox' ;
+  type?: 'text' | 'textarea' | 'select' | 'checkbox' | 'date' ;
 
   required?: boolean;
 
